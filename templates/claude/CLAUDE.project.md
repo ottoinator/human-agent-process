@@ -41,7 +41,7 @@ that keeps it out of history. Which audiences may see what.>
 
 ## Memory
 
-Per-person memory (the `lightrag-local` skill) is not this repo's source of
+Per-person memory (the installed memory adapter) is not this repo's source of
 truth. <Say what is: e.g. "the committed archive under `archive/`".> Capture
 durable, reusable, cross-cutting outcomes; do not duplicate routine artefacts
 already recorded here.

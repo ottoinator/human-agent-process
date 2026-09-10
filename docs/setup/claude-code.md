@@ -12,21 +12,37 @@ cd human-agent-process
 ./scripts/install.sh
 ```
 
-The script symlinks each skill in `claude/skills/` into `~/.claude/skills/`,
-copies the Stop hook to `~/.claude/hooks/`, and installs `claude/CLAUDE.md` as
-`~/.claude/CLAUDE.md` if you have none — otherwise it leaves yours alone and
-tells you what to merge. It never overwrites an existing file. Symlinks mean a
-`git pull` updates the skills in place.
+The script symlinks the four process skills in `claude/skills/` into
+`~/.claude/skills/`, copies the Stop hook to `~/.claude/hooks/`, and installs
+`claude/CLAUDE.md` as `~/.claude/CLAUDE.md` if you have none — otherwise it
+leaves yours alone and tells you what to merge. It never overwrites an existing
+file. Symlinks mean a `git pull` updates the skills in place.
+
+The process needs a **memory adapter** (`../reference/memory-layer.md`). The
+`--memory` flag picks it:
+
+- `--memory lightrag` (default) — also links the `lightrag-local` skill and
+  pastes `claude/memory/lightrag.md` into the *Installed adapter* block of the
+  global `CLAUDE.md`.
+- `--memory none` — process only. Every Tier 2/3 report will say prior-art
+  search and capture could not run, which is the honest state until you
+  append your own adapter's block between the `memory-adapter` markers.
+- `--memory <file>` — paste that file as the adapter block instead (for an
+  adapter that lives outside this repository).
+
+An explicit `--memory` also works on an existing `~/.claude/CLAUDE.md` that
+carries the `memory-adapter` markers: only the marked block is replaced, the
+rest of the file is left alone.
 
 Then register the hook: merge `claude/settings.example.json` into
 `~/.claude/settings.json` (the `hooks.Stop` entry). Hooks are a settings-level
 concept, so the script does not edit that file for you.
 
-## 2. Start the memory service (optional but assumed)
+## 2. Start the memory service (for the LightRAG adapter)
 
-Follow [`../../memory/README.md`](../../memory/README.md). Without it, the
-skills still work; every report will say that prior-art search and capture
-could not run, which is the honest state.
+Follow [`../../memory/README.md`](../../memory/README.md). Without a running
+service the skills still work; every report will say that prior-art search and
+capture could not run, which is the honest state.
 
 ## 3. Verify
 
@@ -37,7 +53,7 @@ Which process skills are available, and what tier is "add a dark-mode toggle
 to the settings page"?
 ```
 
-You should see the four process skills plus `lightrag-local` named, a Tier 2
+You should see the four process skills plus your memory adapter named, a Tier 2
 classification, and the gates it would run, including the critic gate and
 whether it is mandatory or advisory for that repository.
 

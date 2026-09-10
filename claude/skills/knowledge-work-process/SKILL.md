@@ -64,7 +64,8 @@ go-to-market work.
 2. Classify Tier 0–3 ([`references/knowledge-work.md`](references/knowledge-work.md)).
 3. Run only the gates the tier and risk require.
 4. Surface owner decisions; ask before deciding what is not yours.
-5. Search memory for prior art (`lightrag-local`), then verify against source.
+5. Search memory for prior art through the memory adapter (named under
+   *Installed adapter* in the global `CLAUDE.md`), then verify against source.
 6. **Resolve the load-bearing claims before producing** — what the product
    does, what data exists, whether each named party checks out.
 7. Produce the smallest coherent artefact — to the reference's length.
@@ -114,8 +115,9 @@ unresolved that an available tool could settle?
 
 ## Composes with other skills
 
-- `lightrag-local` — the BEFORE (prior art) and AFTER (capture) of every Tier
-  2/3 task; the done contract depends on it.
+- The **memory adapter** — the BEFORE (prior art) and AFTER (capture) of every
+  Tier 2/3 task; the done contract depends on it. If none is installed, say so
+  in the report.
 - Domain skills that *do* the work (a report builder, a requirements drafter,
   a publishing skill). This process wraps them: it decides tier, routes gates,
   and enforces the done contract.

@@ -100,7 +100,8 @@ Done is not "I wrote the text". Done means:
 - Artefact published or delivered where it belongs.
 - Names, claims, and audience verified.
 - Captured to memory when it produced a durable artefact — part of *done*, not
-  an afterthought (the `lightrag-local` skill).
+  an afterthought (through the memory adapter; where its write policy needs
+  authorization, proposed and reported as pending).
 - Final report states what changed, the evidence, that the critic gate ran,
   and remaining gaps honestly.
 

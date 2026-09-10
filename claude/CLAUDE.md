@@ -77,12 +77,15 @@ remaining gaps honestly.
 
 ---
 
-# Persistent Memory (LightRAG — "second brain")
+# Persistent Memory (the memory adapter)
 
-`lightrag-local` is your persistent **second brain**: a local knowledge base
-about your work, projects, people, customers/partners/suppliers, decisions,
-meetings, strategy, and reusable lessons. It runs locally. Treat it as default
-working memory across business *and* technical tasks, not just coding.
+The process assumes a persistent, searchable memory that outlives the session:
+the **BEFORE** (prior art) and **AFTER** (capture) of every Tier 2/3 task. It is
+supplied by a **memory adapter** — a skill or plugin that offers search and
+capture, carries its own write rules and *do not store* list, and exposes no
+delete. The adapter installed on this machine is named under *Installed
+adapter* below. The rules in this section hold for every adapter; the
+adapter's own block adds its commands and write policy.
 
 ## Use it BEFORE non-trivial work, especially when the task involves
 
@@ -95,36 +98,30 @@ working memory across business *and* technical tasks, not just coding.
 - non-trivial **debugging, architecture, deployment, automation, agent design**
 - any moment where *"we have probably been here before"* is plausible
 
-Steps: invoke the `lightrag-local` skill · confirm health · search with 2–3
-focused phrasings · treat results as **prior art** that still needs verifying
-against the current document, repo, conversation, or system.
+Steps: invoke the adapter · confirm it is reachable · search with 2–3 focused
+phrasings · treat results as **prior art** that still needs verifying against
+the current document, repo, conversation, or system.
 
-## Use it AFTER such work — capture is MANDATORY and AUTOMATIC
+## Use it AFTER such work — capture is part of done
 
 If a task fell into any category above **and** produced a durable artefact (a
 published page, a decision, a meeting outcome, a project status, a
-customer/partner update, a reusable lesson or runbook), **capture it to memory
-as the final step, without asking first**. The default is capture, applied
-silently. The user should never have to ask "did you save this?".
+customer/partner update, a reusable lesson or runbook), capture it as the final
+step, following the adapter's write policy. Where that policy needs an
+authorization you do not have, file the proposal and report it as pending —
+that is a valid *done* state. The user should never have to ask "did you save
+this?". A repo or project-file note is **not** capture.
 
-Templates (Decision · Meeting · Person · Customer/Partner/Supplier · Project
-status · Lesson/Runbook) live in the skill.
-
-**Skip capture** when the content fails the quality bar (durable, compact,
-reusable), falls under *Do not store*, or already exists with the same source
-name and unchanged content. **Ask first** only when durability is *genuinely*
-ambiguous (a half-finished draft the user may discard). "I wasn't sure" is not a
-reason to ask.
-
-**After writing**, state in one line what was captured (source name + what it
-covers). Do not ask permission beforehand.
+**Skip capture** when the content fails the quality bar, falls under *Do not
+store*, or already exists unchanged. **After writing**, state in one line what
+was captured (source name + what it covers).
 
 ## When the user asks "did I capture this?" — audit source-first
 
 Do not audit by searching memory and confirming hits; that never surfaces
 gaps. Walk the sources of the recent work first (files modified in the last
 days in each active project directory; pages recently modified in the
-publishing system), list stored documents with `lightrag.sh docs`, and diff.
+publishing system), list what the adapter reports as stored, and diff.
 Presence is searchable; absence requires walking the sources.
 
 ## Quality bar
@@ -142,10 +139,18 @@ months, do not store it.
 - raw email/chat dumps without a written summary
 - noisy intermediate status (transient PR state, in-flight todos)
 
-The store is local and not encrypted at rest. Treat it like a personal
-notebook on this machine.
-
-## If the memory service is unavailable
+## If the adapter is unavailable
 
 Continue the task. State explicitly that memory search and/or capture could
 not be performed and why. Do not retry indefinitely.
+
+## Installed adapter
+
+<!-- memory-adapter:begin -->
+No memory adapter is installed. Every Tier 2/3 report must say that prior-art
+search and capture could not run. To install one, run
+`scripts/install.sh --memory lightrag` (or `--memory <file>` with your own
+adapter block) in the human-agent-process repository: with an explicit
+`--memory` it replaces this marked block in place. The contract an adapter
+meets is in `docs/reference/memory-layer.md`.
+<!-- memory-adapter:end -->

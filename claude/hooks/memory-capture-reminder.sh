@@ -8,7 +8,7 @@ marker="${TMPDIR:-/tmp}/claude-memory-capture-${sid}"
 if [ ! -e "$marker" ]; then
   : > "$marker"
   cat <<'JSON'
-{"suppressOutput":true,"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Capture check (global memory rule): if this session produced a durable decision, project-status change, meeting outcome, customer/partner update, or reusable lesson, confirm it is captured in the memory layer (lightrag.sh docs) before ending — a repo or project-file note is NOT capture. Self-audit source-first, then report."}}
+{"suppressOutput":true,"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Capture check (global memory rule): if this session produced a durable decision, project-status change, meeting outcome, customer/partner update, or reusable lesson, confirm it is captured through the installed memory adapter (list what it reports as stored), or proposed and reported as pending where its write policy needs authorization, before ending — a repo or project-file note is NOT capture. Self-audit source-first, then report."}}
 JSON
 fi
 exit 0
