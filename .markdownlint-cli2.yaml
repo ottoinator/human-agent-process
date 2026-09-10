@@ -1,0 +1,13 @@
+config:
+  MD013: false   # line length — prose wraps at ~80 but tables and links run long
+  MD024:
+    siblings_only: true
+  MD025: false   # claude/CLAUDE.md deliberately has two top-level sections
+  MD033: false
+  MD036: false   # bold labels above template blocks are intentional
+  MD040: false   # template blocks are plain text, not code
+  MD041: false   # adapter files and PR templates start without an H1
+globs:
+  - "**/*.md"
+ignores:
+  - "node_modules/**"

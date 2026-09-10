@@ -1,0 +1,24 @@
+name: Workflow improvement
+description: Improve a gate, role, template, skill, or evidence rule.
+title: "[Workflow]: "
+labels: ["workflow"]
+body:
+  - type: textarea
+    id: area
+    attributes:
+      label: Process area
+      description: Which gate, role, template, skill, or example is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Suggested improvement
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or example
+    validations:
+      required: false
