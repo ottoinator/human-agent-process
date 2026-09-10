@@ -17,8 +17,9 @@ when to use, steps, output contract. Point your agent at the directory, or
 paste the relevant `SKILL.md` into its system prompt. The `references/` folders
 hold the longer text a skill points to; include them when context allows.
 
-The `lightrag-local` skill needs `bash`, `curl`, and `python3` for its script.
-Everything else is prose.
+The process skills are prose and assume a memory adapter
+(`../reference/memory-layer.md`). The reference adapter `lightrag-local` needs
+`bash`, `curl`, and `python3` for its script.
 
 ## Agents with only a system prompt
 

@@ -6,7 +6,8 @@ by hand:
 | File | Goes to | What it does |
 | --- | --- | --- |
 | `CLAUDE.md` | `~/.claude/CLAUDE.md` | Global instructions: the process stance, tiers, done contract, and the memory rules. Loads in every session. |
-| `skills/*` | `~/.claude/skills/<name>` (symlink) | The five skills Claude Code can invoke by name. |
+| `skills/*` | `~/.claude/skills/<name>` (symlink) | The four process skills, plus `lightrag-local` when the LightRAG adapter is chosen. |
+| `memory/*.md` | pasted into `~/.claude/CLAUDE.md` | One adapter block per memory implementation; `install.sh --memory` picks it. |
 | `hooks/memory-capture-reminder.sh` | `~/.claude/hooks/` | A Stop hook that reminds once per session to capture durable outcomes. |
 | `settings.example.json` | merge into `~/.claude/settings.json` | Registers the hook. The path assumes the default `~/.claude`; adjust it if you installed with `CLAUDE_HOME` set. |
 
@@ -21,7 +22,7 @@ sections you want; nothing here depends on being the only content.
 | `knowledge-work-process` | Producing documents and decisions: briefings, pages, decks, reports, minutes, updates. |
 | `critic-reviewer` | An independent quality, credibility, adoption, or risk review of a plan or artefact. |
 | `qa-engineer` | Reproducible verification evidence before delivery, for code or documents. |
-| `lightrag-local` | The memory layer: prior art before work, capture after. Talks to a local LightRAG service (`../memory/`). |
+| `lightrag-local` | The reference **memory adapter**: prior art before work, capture after. Talks to a local LightRAG service (`../memory/`). Any adapter meeting `../docs/reference/memory-layer.md` can replace it. |
 
 Each `SKILL.md` is self-contained. The `references/` folders hold the longer
 text a skill points to; the normative human-readable version is in `../docs/`.

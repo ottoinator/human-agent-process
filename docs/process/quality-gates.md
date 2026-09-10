@@ -66,6 +66,8 @@ Work is done when the relevant slice satisfies all of:
 - Documentation changed where behaviour changed.
 - The artefact is delivered where it belongs.
 - Names, claims, and audience are verified.
-- The durable outcome is captured to memory (the `lightrag-local` skill).
+- The durable outcome is captured to memory through the memory adapter — or,
+  where the adapter's write policy requires authorization, proposed and
+  reported as pending.
 - The final report states evidence, whether the critic ran, and remaining gaps
   honestly, with `human-validation-missing` where that is the truth.

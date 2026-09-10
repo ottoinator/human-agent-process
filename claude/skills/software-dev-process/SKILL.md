@@ -50,8 +50,9 @@ a report or a page is knowledge work.
 5. **Surface owner decisions** — ask before deciding goal, scope, audience,
    risk, privacy, cost, naming, or release (Stop Conditions in
    [`references/ai-agent-operating-model.md`](references/ai-agent-operating-model.md)).
-6. **Search memory for prior art** (`lightrag-local`), then verify against the
-   source.
+6. **Search memory for prior art** through the memory adapter — the skill or
+   plugin named under *Installed adapter* in the global `CLAUDE.md` — then
+   verify against the source.
 7. **Implement the smallest coherent slice.**
 8. **Verify with evidence that matches the claim** — actually run it; do not
    infer.
@@ -153,13 +154,14 @@ template if it has none.
 
 - **Composes with, does not replace, the specialists.** `qa-engineer` owns the
   QA gate when tests and repro evidence matter; `critic-reviewer` owns the
-  critic gate; `lightrag-local` supplies prior art before and captures the
+  critic gate; the memory adapter supplies prior art before and captures the
   durable decision or runbook after. This skill decides tier, routes gates,
   and enforces the done contract.
 - **If a specialist skill is not installed**, run the gate as a
   fresh-perspective pass — a general-purpose subagent with an explicit critic
   or QA scope and an output contract — and say in the report that that is what
-  you did. Do not silently skip it.
+  you did. Do not silently skip it. **If no memory adapter is installed**, the
+  report says prior-art search and capture could not run.
 - **`critic-reviewer` is a skill, not a subagent type.** Invoking it inside the
   producing session is self-review with a checklist. For an independent pass,
   spawn a general-purpose agent and hand it the critic scope and the premises

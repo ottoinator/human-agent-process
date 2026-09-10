@@ -17,6 +17,8 @@ const required = [
   "claude/skills/qa-engineer/SKILL.md",
   "claude/skills/lightrag-local/SKILL.md",
   "claude/skills/lightrag-local/scripts/lightrag.sh",
+  "claude/memory/lightrag.md",
+  "docs/decisions",
   "memory/README.md", "memory/docker-compose.yml", "memory/.env.example",
   "memory/scripts/backup.sh",
   "templates/README.md", "templates/claude/CLAUDE.project.md",

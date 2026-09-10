@@ -1,7 +1,8 @@
 # Capture Note
 
 The one-screen memory entry written after a Tier 2/3 artefact. Pick the shape
-that matches the knowledge; the templates are in the `lightrag-local` skill.
+that matches the knowledge; your memory adapter may ship its own templates
+(the reference adapter `lightrag-local` does).
 
 Source name: `<project|decision|meeting|people|supplier|runbook|lesson>/<...>`
 

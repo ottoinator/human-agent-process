@@ -56,14 +56,20 @@ cd human-agent-process
 ./scripts/install.sh
 ```
 
-That symlinks the five skills into `~/.claude/skills/`, copies the Stop hook,
-and installs [claude/CLAUDE.md](claude/CLAUDE.md) as your global `CLAUDE.md`
-if you have none (otherwise it tells you what to merge). From then on every
+That symlinks the skills into `~/.claude/skills/`, copies the Stop hook, and
+installs [claude/CLAUDE.md](claude/CLAUDE.md) as your global `CLAUDE.md` if
+you have none (otherwise it tells you what to merge). From then on every
 session knows the tiers, the gates, and the done contract, and can invoke
-`software-dev-process`, `knowledge-work-process`, `critic-reviewer`,
-`qa-engineer`, and `lightrag-local` by name. The memory service is set up
-separately from [memory/README.md](memory/README.md). Full walkthrough:
-[docs/setup/claude-code.md](docs/setup/claude-code.md).
+`software-dev-process`, `knowledge-work-process`, `critic-reviewer`, and
+`qa-engineer` by name.
+
+The process is **memory-agnostic**: it assumes a memory adapter for prior art
+before and capture after, but not a particular store. `install.sh` defaults to
+the reference adapter (`--memory lightrag`, the `lightrag-local` skill plus a
+local service from [memory/README.md](memory/README.md)); `--memory none` or
+`--memory <file>` plugs in another. The contract an adapter has to meet is in
+[docs/reference/memory-layer.md](docs/reference/memory-layer.md). Full
+walkthrough: [docs/setup/claude-code.md](docs/setup/claude-code.md).
 
 ### For a project
 
@@ -99,11 +105,13 @@ Full text: [docs/process/quality-gates.md](docs/process/quality-gates.md) and
 
 ```text
 claude/              Mirror of ~/.claude: global CLAUDE.md, skills/, hooks/, settings.example.json
-  skills/            software-dev-process · knowledge-work-process · critic-reviewer · qa-engineer · lightrag-local
-memory/              The second brain: LightRAG compose file, .env.example, backup script, launchd template
+  skills/            software-dev-process · knowledge-work-process · critic-reviewer · qa-engineer · lightrag-local (reference memory adapter)
+  memory/            Adapter blocks for the global CLAUDE.md, one per memory implementation
+memory/              The reference second brain: LightRAG compose file, .env.example, backup script, launchd template
 docs/process/        Normative process: principles, lifecycle, roles, gates, critic gate
 docs/knowledge-work/ The same process mapped onto documents and decisions, plus the provenance rules
-docs/reference/      Terminology, evidence labels, public safety, the memory layer
+docs/reference/      Terminology, evidence labels, public safety, the memory layer and its adapter contract
+docs/decisions/      Accepted decision records
 docs/setup/          Installing this for Claude Code and for other agents
 templates/           Copyable files: project CLAUDE.md, AGENTS.md, project, agent, knowledge, GitHub
 examples/            Non-normative walkthroughs: minimal adoption, a feature, a briefing
