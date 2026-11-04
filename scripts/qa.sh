@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
-# Static QA for this repository. Node only; markdownlint runs when npx exists.
+# QA in Docker. Default: runs on the COMMITTED HEAD (git bundle -> clone inside the image),
+# so uncommitted changes are not tested. --worktree: mounts the working tree read-only (fast local loop).
 set -euo pipefail
-cd "$(dirname "${BASH_SOURCE[0]}")/.."
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO"
+MODE=head
+for a in "$@"; do
+  case "$a" in
+    --worktree) MODE=worktree ;;
+    -h|--help) echo "usage: scripts/qa.sh [--worktree]"; exit 0 ;;
+    *) echo "unknown option: $a" >&2; exit 2 ;;
+  esac
+done
+command -v docker >/dev/null 2>&1 || { echo "QA blocked: docker not available" >&2; exit 1; }
 
-echo "== repo tree ==";        node tests/assert-repo-tree.mjs
-echo "== internal links ==";   node tests/check-internal-links.mjs
-echo "== secret patterns ==";  node tests/check-secret-patterns.mjs
-echo "== skill front matter =="; node tests/check-skills.mjs
-echo "== paired docs ==";       node tests/check-paired-docs.mjs
-echo "== shell syntax ==";     bash -n scripts/*.sh claude/hooks/*.sh claude/skills/lightrag-local/scripts/*.sh memory/scripts/*.sh
-if [ "${QA_MARKDOWNLINT:-1}" = "1" ] && command -v npx >/dev/null 2>&1; then
-  echo "== markdownlint =="
-  npx --yes markdownlint-cli2@0.18.1 "**/*.md" "#node_modules" || { echo "markdownlint failed"; exit 1; }
+CTX="$(mktemp -d)"; trap 'rm -rf "${CTX:?}"' EXIT
+cp Dockerfile.qa "$CTX/Dockerfile.qa"
+if [ "$MODE" = head ]; then
+  git bundle create "$CTX/repo.bundle" HEAD >/dev/null 2>&1
+  QA_CONTEXT="$CTX" docker compose -f compose.yaml run --rm --build qa
 else
-  echo "== markdownlint == skipped (no npx or QA_MARKDOWNLINT=0)"
+  : > "$CTX/repo.bundle"
+  docker build -q -f "$CTX/Dockerfile.qa" --target base -t hap-qa-base "$CTX" >/dev/null
+  docker run --rm -v "$REPO:/src:ro" -w /src hap-qa-base bash -c 'npm test && bash tests/e2e/install-smoke.sh'
 fi
-echo "QA passed"
+echo "QA passed ($MODE)"

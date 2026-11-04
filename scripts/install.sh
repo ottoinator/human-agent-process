@@ -1,118 +1,209 @@
 #!/usr/bin/env bash
-# Install the Claude Code layer of human-agent-process into ~/.claude.
-# Symlinks the process skills (so `git pull` updates them), copies the hook,
-# installs the global CLAUDE.md only if none exists, and pastes the chosen
-# memory adapter's block into it. Never overwrites a file; with an explicit
-# --memory it replaces only the marked adapter block of an existing CLAUDE.md.
-# --uninstall reverses the symlinks and the hook.
-#
-#   ./scripts/install.sh                   # process + reference adapter (LightRAG)
-#   ./scripts/install.sh --memory none     # process only; reports will say memory did not run
-#   ./scripts/install.sh --memory <file>   # process + your own adapter block
-#   ./scripts/install.sh --uninstall
+# Installer for the human-agent process v2: policy block + Codex agents + plugin commands.
+# Works on macOS and Linux (no GNU-only flags). Requires node.
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CLAUDE_HOME="${CLAUDE_HOME:-$HOME/.claude}"
-SRC="$REPO/claude"
-PROCESS_SKILLS=(software-dev-process knowledge-work-process critic-reviewer qa-engineer)
-MEMORY="lightrag"
-MEMORY_EXPLICIT=0
+PLUGIN="$REPO/plugins/human-agent-process"
+TARGET=both
+MODULES=default
+CLAUDE_HOME="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+CODEX_HOME_DIR="${CODEX_HOME:-$HOME/.codex}"
+AGENTS_SKILLS="${AGENTS_SKILLS_DIR:-}"
+CODEX_HOME_FLAG=0
+DRY=0; UNINSTALL=0; MIGRATE=0; FORCE=0; PLUGIN_CMD=1
 
-say() { printf '%s\n' "$*"; }
-die() { say "error: $*" >&2; exit 1; }
-
-link_skill() {
-  local d="$SRC/skills/$1" target="$CLAUDE_HOME/skills/$1"
-  [ -d "$d" ] || die "no such skill in repo: $1"
-  if [ -L "$target" ]; then
-    ln -sfn "$d" "$target"; say "updated symlink  $target"
-  elif [ -e "$target" ]; then
-    say "SKIP  $target exists and is not a symlink — remove it to install this skill"
-  else
-    ln -s "$d" "$target"; say "linked  $target"
-  fi
-}
-
-has_markers() {
-  grep -q '<!-- memory-adapter:begin -->' "$1" && grep -q '<!-- memory-adapter:end -->' "$1"
-}
-
-# Replace the block between the memory-adapter markers with the adapter file.
-paste_adapter() {
-  local claude_md="$1" block="$2"
-  has_markers "$claude_md" || die "$claude_md has no memory-adapter markers; append $block by hand"
-  local tmp; tmp="$(mktemp)"
-  awk -v block="$block" '
-    /<!-- memory-adapter:begin -->/ { print; while ((getline line < block) > 0) print line; skip=1; next }
-    /<!-- memory-adapter:end -->/   { skip=0 }
-    !skip { print }
-  ' "$claude_md" > "$tmp" && mv "$tmp" "$claude_md"
-}
-
-uninstall() {
-  for d in "$SRC"/skills/*/; do
-    name="$(basename "$d")"
-    link="$CLAUDE_HOME/skills/$name"
-    if [ -L "$link" ]; then rm "$link"; say "removed symlink $link"; fi
-  done
-  hook="$CLAUDE_HOME/hooks/memory-capture-reminder.sh"
-  [ -f "$hook" ] && rm "$hook" && say "removed $hook"
-  say "left $CLAUDE_HOME/CLAUDE.md and settings.json untouched — edit by hand."
+usage() {
+  cat <<USAGE
+Usage: scripts/install.sh [--claude|--codex|--both] [--modules a,b|default|all|none]
+  [--claude-home DIR] [--codex-home DIR] [--dry-run] [--uninstall]
+  [--migrate-from-1x] [--force] [--no-plugin-cmd]
+USAGE
 }
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --uninstall) uninstall; exit 0 ;;
-    --memory) [ $# -ge 2 ] || die "--memory needs a value: lightrag | none | <file>"; MEMORY="$2"; MEMORY_EXPLICIT=1; shift 2 ;;
-    -h|--help) sed -n '2,12p' "$0" | grep -v '^set '; exit 0 ;;
-    *) die "unknown argument: $1" ;;
+    --claude) TARGET=claude ;;
+    --codex) TARGET=codex ;;
+    --both) TARGET=both ;;
+    --modules) MODULES="${2:?--modules needs a value}"; shift ;;
+    --claude-home) CLAUDE_HOME="${2:?}"; shift ;;
+    --codex-home) CODEX_HOME_DIR="${2:?}"; CODEX_HOME_FLAG=1; shift ;;
+    --dry-run) DRY=1 ;;
+    --uninstall) UNINSTALL=1 ;;
+    --migrate-from-1x) MIGRATE=1 ;;
+    --force) FORCE=1 ;;
+    --no-plugin-cmd) PLUGIN_CMD=0 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
+  shift
 done
 
-# Resolve the adapter block before touching anything.
-ADAPTER_BLOCK=""
-case "$MEMORY" in
-  none) ;;
-  lightrag) ADAPTER_BLOCK="$SRC/memory/lightrag.md" ;;
-  *) ADAPTER_BLOCK="$MEMORY"; [ -f "$ADAPTER_BLOCK" ] || die "adapter block not found: $ADAPTER_BLOCK" ;;
-esac
+command -v node >/dev/null 2>&1 || { echo "node is required" >&2; exit 1; }
+do_claude=0; do_codex=0
+if [ "$TARGET" = claude ] || [ "$TARGET" = both ]; then do_claude=1; fi
+if [ "$TARGET" = codex ] || [ "$TARGET" = both ]; then do_codex=1; fi
+# Skills fallback: under the given Codex home when --codex-home is set, else ~/.agents/skills.
+if [ -z "$AGENTS_SKILLS" ]; then
+  if [ "$CODEX_HOME_FLAG" = 1 ]; then AGENTS_SKILLS="$CODEX_HOME_DIR/skills"; else AGENTS_SKILLS="$HOME/.agents/skills"; fi
+fi
+# Plugin commands must act on the same homes as the files we write.
+export CLAUDE_CONFIG_DIR="$CLAUDE_HOME" CODEX_HOME="$CODEX_HOME_DIR"
+STAMP="$(date +%Y%m%d%H%M%S)"
+DRYFLAG=""; if [ "$DRY" = 1 ]; then DRYFLAG="--dry-run"; fi
+TMP="$(mktemp -d)"; trap 'rm -rf "${TMP:?}"' EXIT
 
-mkdir -p "$CLAUDE_HOME/skills" "$CLAUDE_HOME/hooks"
+blockfile() { node "$REPO/scripts/lib/blockfile.mjs" "$@"; }
+verb() { if [ "$DRY" = 1 ]; then echo "would $1"; else echo "$1"; fi; }
 
-# Process skills: symlink each directory.
-for s in "${PROCESS_SKILLS[@]}"; do link_skill "$s"; done
-# The reference adapter ships its own skill.
-[ "$MEMORY" = "lightrag" ] && link_skill lightrag-local
+install_agents() {
+  local dest="$CODEX_HOME_DIR/agents" f name
+  if [ "$DRY" != 1 ]; then mkdir -p "$dest"; fi
+  for f in "$PLUGIN"/codex/agents/*.toml; do
+    name="$(basename "$f")"
+    if [ -e "$dest/$name" ] && cmp -s "$f" "$dest/$name"; then
+      echo "same $dest/$name"
+    elif [ -e "$dest/$name" ] && [ "$FORCE" != 1 ]; then
+      echo "SKIP $dest/$name (exists and differs; use --force)"
+    else
+      if [ -e "$dest/$name" ]; then
+        verb "backup $dest/$name -> $name.hap-backup-$STAMP"
+        if [ "$DRY" != 1 ]; then cp -p "$dest/$name" "$dest/$name.hap-backup-$STAMP"; fi
+      fi
+      verb "copy $dest/$name"
+      if [ "$DRY" != 1 ]; then cp "$f" "$dest/$name"; fi
+    fi
+  done
+}
 
-# Hook: copy (hooks are referenced by absolute path from settings.json).
-hook_dst="$CLAUDE_HOME/hooks/memory-capture-reminder.sh"
-if [ -e "$hook_dst" ]; then
-  say "SKIP  $hook_dst exists"
-else
-  cp "$SRC/hooks/memory-capture-reminder.sh" "$hook_dst"; chmod +x "$hook_dst"
-  say "copied  $hook_dst"
+uninstall_agents() {
+  local dest="$CODEX_HOME_DIR/agents" f name bak
+  for f in "$PLUGIN"/codex/agents/*.toml; do
+    name="$(basename "$f")"
+    if [ -e "$dest/$name" ]; then
+      if cmp -s "$f" "$dest/$name"; then
+        bak="$(ls -1 "$dest/$name".hap-backup-* 2>/dev/null | sort | tail -n 1 || true)"
+        if [ -n "$bak" ]; then
+          verb "restore $dest/$name from $(basename "$bak")"
+          if [ "$DRY" != 1 ]; then cp -p "$bak" "$dest/$name"; fi
+        else
+          verb "remove $dest/$name"
+          if [ "$DRY" != 1 ]; then rm -f "${dest:?}/${name:?}"; fi
+        fi
+      else
+        echo "KEEP $dest/$name (content differs from ours)"
+      fi
+    fi
+  done
+}
+
+copy_skills() {
+  if [ ! -d "$PLUGIN/skills" ]; then echo "no skills directory in plugin; nothing to copy"; return 0; fi
+  local d name
+  if [ "$DRY" != 1 ]; then mkdir -p "$AGENTS_SKILLS"; fi
+  for d in "$PLUGIN"/skills/*/; do
+    name="$(basename "$d")"
+    if [ -e "$AGENTS_SKILLS/$name" ]; then
+      if diff -r "$d" "$AGENTS_SKILLS/$name" >/dev/null 2>&1; then echo "same $AGENTS_SKILLS/$name"
+      else echo "SKIP $AGENTS_SKILLS/$name (exists and differs)"; fi
+    else
+      verb "copy skill $AGENTS_SKILLS/$name"
+      if [ "$DRY" != 1 ]; then cp -R "$d" "$AGENTS_SKILLS/$name"; fi
+    fi
+  done
+}
+
+uninstall_skills() {
+  if [ ! -d "$PLUGIN/skills" ]; then return 0; fi
+  local d name
+  for d in "$PLUGIN"/skills/*/; do
+    name="$(basename "$d")"
+    if [ -d "$AGENTS_SKILLS/$name" ] && diff -r "$d" "$AGENTS_SKILLS/$name" >/dev/null 2>&1; then
+      verb "remove skill $AGENTS_SKILLS/$name"
+      if [ "$DRY" != 1 ]; then rm -rf "${AGENTS_SKILLS:?}/${name:?}"; fi
+    fi
+  done
+}
+
+migrate() {
+  local l t
+  if [ -d "$CLAUDE_HOME/skills" ]; then
+    for l in "$CLAUDE_HOME"/skills/*; do
+      if [ ! -L "$l" ]; then continue; fi
+      t="$(readlink "$l")"
+      case "$t" in
+        */claude/skills/*)
+          case "$t" in
+            *human-agent-process*|"$REPO"/*)
+              verb "remove stale skill symlink $l -> $t"
+              if [ "$DRY" != 1 ]; then rm -f "${l:?}"; fi ;;
+          esac ;;
+      esac
+    done
+  fi
+  l="$CLAUDE_HOME/hooks/memory-capture-reminder.sh"
+  if [ -L "$l" ]; then
+    t="$(readlink "$l")"
+    case "$t" in
+      *human-agent-process*|"$REPO"/*)
+        verb "remove stale hook symlink $l -> $t"
+        if [ "$DRY" != 1 ]; then rm -f "${l:?}"; fi
+        echo "note: remove the matching hook entry from settings.json by hand if present" ;;
+    esac
+  fi
+}
+
+if [ "$MIGRATE" = 1 ]; then migrate; fi
+
+if [ "$UNINSTALL" = 1 ]; then
+  if [ "$do_claude" = 1 ]; then blockfile remove "$CLAUDE_HOME/CLAUDE.md" $DRYFLAG; fi
+  if [ "$do_codex" = 1 ]; then
+    blockfile remove "$CODEX_HOME_DIR/AGENTS.md" $DRYFLAG
+    uninstall_agents
+    uninstall_skills
+  fi
+  if [ "$PLUGIN_CMD" = 1 ] && [ "$DRY" = 0 ]; then
+    if [ "$do_claude" = 1 ] && command -v claude >/dev/null 2>&1; then
+      claude plugin uninstall human-agent-process@human-agent-process || echo "claude plugin uninstall failed (ignored)"
+    fi
+    if [ "$do_codex" = 1 ] && command -v codex >/dev/null 2>&1; then
+      codex plugin remove human-agent-process@human-agent-process || echo "codex plugin remove failed (ignored)"
+      codex plugin marketplace remove human-agent-process || echo "codex marketplace remove failed (ignored)"
+    fi
+  fi
+  echo "uninstall done (backups *.hap-backup-* are kept)"
+  exit 0
 fi
 
-# Global CLAUDE.md: install only if absent, then paste the adapter block.
-if [ -e "$CLAUDE_HOME/CLAUDE.md" ]; then
-  say "SKIP  $CLAUDE_HOME/CLAUDE.md exists — merge $SRC/CLAUDE.md into it by hand"
-  if [ "$MEMORY_EXPLICIT" = 1 ] && [ -n "$ADAPTER_BLOCK" ] && has_markers "$CLAUDE_HOME/CLAUDE.md"; then
-    paste_adapter "$CLAUDE_HOME/CLAUDE.md" "$ADAPTER_BLOCK"
-    say "replaced the memory-adapter block in $CLAUDE_HOME/CLAUDE.md with $ADAPTER_BLOCK"
-  elif [ -n "$ADAPTER_BLOCK" ]; then
-    say "      and paste $ADAPTER_BLOCK between its memory-adapter markers (pass --memory explicitly to have this done for you)"
-  fi
-else
-  cp "$SRC/CLAUDE.md" "$CLAUDE_HOME/CLAUDE.md"; say "installed  $CLAUDE_HOME/CLAUDE.md"
-  if [ -n "$ADAPTER_BLOCK" ]; then
-    paste_adapter "$CLAUDE_HOME/CLAUDE.md" "$ADAPTER_BLOCK"; say "memory adapter: $MEMORY ($ADAPTER_BLOCK)"
-  else
-    say "memory adapter: none — reports will state that prior-art search and capture could not run"
-  fi
+if [ "$do_claude" = 1 ]; then
+  node "$REPO/scripts/build.mjs" --block claude --modules "$MODULES" > "$TMP/claude.block"
+  [ -s "$TMP/claude.block" ] || { echo "block generation produced no output; nothing written" >&2; exit 1; }
+  blockfile upsert "$CLAUDE_HOME/CLAUDE.md" "$TMP/claude.block" $DRYFLAG
+fi
+if [ "$do_codex" = 1 ]; then
+  node "$REPO/scripts/build.mjs" --block codex --modules "$MODULES" > "$TMP/codex.block"
+  [ -s "$TMP/codex.block" ] || { echo "block generation produced no output; nothing written" >&2; exit 1; }
+  blockfile upsert "$CODEX_HOME_DIR/AGENTS.md" "$TMP/codex.block" $DRYFLAG
+  install_agents
 fi
 
-say
-say "Next: merge claude/settings.example.json into $CLAUDE_HOME/settings.json (hooks.Stop)"
-[ "$MEMORY" = "lightrag" ] && say "      and set up the memory service: memory/README.md"
+if [ "$do_claude" = 1 ]; then
+  echo "Claude Code skills and agents come with the plugin. In Claude Code run:"
+  echo "  /plugin marketplace add $REPO"
+  echo "  /plugin install human-agent-process@human-agent-process"
+  if [ "$PLUGIN_CMD" = 1 ] && [ "$DRY" = 0 ] && command -v claude >/dev/null 2>&1; then
+    { claude plugin marketplace add "$REPO" && claude plugin install human-agent-process@human-agent-process; } \
+      || echo "claude plugin commands failed; run the two /plugin commands above"
+  fi
+fi
+if [ "$do_codex" = 1 ]; then
+  codex_ok=0
+  if [ "$PLUGIN_CMD" = 1 ] && [ "$DRY" = 0 ] && command -v codex >/dev/null 2>&1; then
+    if codex plugin marketplace add "$REPO" && codex plugin add human-agent-process@human-agent-process; then codex_ok=1
+    else echo "codex plugin commands failed; copying skills instead"; fi
+  fi
+  if [ "$codex_ok" = 0 ]; then copy_skills; fi
+fi
+if [ "$DRY" = 1 ]; then echo "dry run: nothing written"; fi
 exit 0

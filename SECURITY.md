@@ -1,24 +1,31 @@
 # Security Policy
 
-This repository is a public documentation, template, and skill toolkit. It does
-not operate a live service.
+This repository is a public toolkit: rules, skills, templates, and an
+installer. It operates no hosted service.
 
 ## Reporting
 
-Please do not open public issues for secrets, credential leaks, or private
-data. Use GitHub private vulnerability reporting when available, or contact the
-repository owner through a non-public channel.
+Please do not open public issues for vulnerabilities, secrets, or private
+data. Use GitHub private vulnerability reporting (the "Report a vulnerability"
+button on the repository's Security tab).
+
+## What the installer touches
+
+`scripts/install.sh` writes outside this repository: a managed block in your
+global instruction files (`CLAUDE.md` and `AGENTS.md`) and role files in the
+agents directories of Claude Code and Codex. It makes a backup before every
+write, supports `--dry-run` to preview and `--uninstall` to remove what it
+added, and never edits content outside its own markers. Read the dry run
+before installing. Reports about the installer overwriting, leaking, or
+widening permissions are in scope.
 
 ## Public safety rules
 
-Do not contribute:
-
-- API keys, tokens, passwords, cookies, private keys, or `.env` files.
-- Private logs, transcripts, screenshots, support requests, or customer data.
-- Internal hostnames, private network details, or deployment credentials.
-- Agent instructions that grant broad permissions without approval boundaries.
+Do not contribute API keys, tokens, passwords, cookies, private keys, `.env`
+files, private logs, transcripts, screenshots, customer data, internal
+hostnames, or agent instructions that grant broad permissions without
+approval boundaries.
 
 ## Supported surface
 
-Security review covers repository content and CI configuration. There is no
-runtime service, hosted product, or API in scope.
+Repository content, CI configuration, and the installer.

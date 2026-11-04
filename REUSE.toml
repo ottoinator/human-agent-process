@@ -1,0 +1,15 @@
+version = 1
+SPDX-PackageName = "human-agent-process"
+SPDX-PackageDownloadLocation = "https://github.com/ottoinator/human-agent-process"
+
+[[annotations]]
+path = ["scripts/**", "tests/**", "**/*.mjs", "**/*.sh", "**/*.json", ".github/workflows/**", ".editorconfig", ".markdownlint-cli2.yaml", ".gitignore"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Rene Otto"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["docs/**", "core/**", "plugins/**/skills/**", "examples/**", "templates/**", "README.md", "AGENTS.md", "CLAUDE.md", "llms.txt", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md", "LICENSE-DOCS.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Rene Otto"
+SPDX-License-Identifier = "CC-BY-4.0"

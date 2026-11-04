@@ -1,7 +1,7 @@
 # Public Safety
 
 This repository is public, so it follows the published-copy rule of principle 5
-(`../process/principles.md`): abstract operational detail out, keep the
+([principles](../../plugins/human-agent-process/skills/software-dev-process/references/principles.md)): abstract operational detail out, keep the
 specific version private.
 
 ## Do not publish

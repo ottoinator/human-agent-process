@@ -1,0 +1,8 @@
+# Run through scripts/qa.sh, which prepares the build context (Dockerfile.qa + git bundle of HEAD).
+services:
+  qa:
+    build:
+      context: ${QA_CONTEXT:?run through scripts/qa.sh}
+      dockerfile: Dockerfile.qa
+      target: qa
+    command: ["bash", "-c", "npm test && bash tests/e2e/install-smoke.sh"]

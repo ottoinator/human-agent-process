@@ -1,7 +1,9 @@
 # Decision: the process is memory-agnostic; the store is an adapter
 
 Date: 2026-09-10
-Status: accepted
+Status: accepted (paths updated by the 2.0.0 restructure, see
+`2026-11-04-two-platforms-one-core.md`: the adapter block and skill now live
+under `examples/memory-adapter-lightrag/` and are examples, not defaults)
 
 ## Context
 

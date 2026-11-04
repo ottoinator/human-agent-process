@@ -1,0 +1,16 @@
+{
+  "name": "human-agent-process",
+  "version": "2.0.0",
+  "description": "Human-agent process: owner boundary, tiers, critic gate, QA and evidence rules, and workflow skills; four subagent roles come with the Claude plugin and the Codex installer.",
+  "author": {
+    "name": "Rene Otto"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/ottoinator/human-agent-process",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Human-Agent Process",
+    "shortDescription": "Owner boundary, tiers, critic gate, QA and evidence rules.",
+    "category": "Productivity"
+  }
+}

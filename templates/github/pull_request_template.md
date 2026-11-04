@@ -4,10 +4,10 @@
 
 ## Changed Boundaries
 
-- [ ] docs/process
-- [ ] docs/reference
+- [ ] core (policy, roles, platforms)
+- [ ] docs
 - [ ] templates
-- [ ] skills
+- [ ] skills (plugins/)
 - [ ] examples
 - [ ] QA
 

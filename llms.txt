@@ -1,0 +1,41 @@
+# Human-Agent Process
+
+> A process for humans and AI agents working together: risk tiers, a start gate with a `hap_gate:` marker, independent critic and QA roles, and evidence-based done. One shared core, distributed as a Claude Code plugin and a Codex plugin with agents and an AGENTS.md block.
+
+## Start
+
+- [README](README.md): what it is, quickstart for both platforms, modules
+- [Install for agents](docs/start/install-for-agents.md): exact steps and the verification (`hap_gate:` line)
+- [Quickstart](docs/start/quickstart.md): five minutes
+
+## Concepts
+
+- [Owner boundary](docs/concepts/owner-boundary.md)
+- [Tiers and the start gate](docs/concepts/tiers-and-start-gate.md)
+- [Roles and cost](docs/concepts/roles-and-cost.md)
+- [Critic and evidence](docs/concepts/critic-and-evidence.md)
+- [Memory adapter](docs/concepts/memory-adapter.md)
+
+## Modules
+
+- [Growth](docs/modules/growth.md)
+- [Concurrency](docs/modules/concurrency.md)
+- [Routines](docs/modules/routines.md)
+- [Impact map](docs/modules/impact-map.md)
+- [Second opinion](docs/modules/second-opinion.md)
+- [Design reference](docs/modules/design-reference.md)
+- [Remote review](docs/modules/remote-review.md)
+
+## Reference
+
+- [Claude Code](docs/platforms/claude-code.md) and [Codex](docs/platforms/codex.md) differences
+- [Skills](plugins/human-agent-process/skills/start-gate/SKILL.md): start-gate, software-dev-process, knowledge-work-process, critic-reviewer, qa-engineer
+- [Templates](templates/README.md): PROJECT_START, HANDOFF, task and review templates
+- [Terminology](docs/reference/terminology.md)
+
+## Optional
+
+- [Why the rules exist](docs/why/README.md)
+- [Decisions](docs/decisions/2026-11-04-two-platforms-one-core.md)
+- [Examples](examples/minimal-adoption/README.md)
+- [Rules for working on this repo](AGENTS.md)

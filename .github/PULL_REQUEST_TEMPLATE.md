@@ -2,7 +2,7 @@
 
 ## Why it fits the boundaries
 
-<!-- docs/process and docs/knowledge-work are normative; skills self-contained; templates copyable; examples non-normative -->
+<!-- core/ is the only hand-edited rule source; skills self-contained and platform-neutral; templates copyable; examples non-normative -->
 
 ## Tier and critic gate
 

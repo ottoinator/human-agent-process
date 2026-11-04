@@ -12,12 +12,13 @@ written but does not let them decide because the key facts are hedged.
 
 ## 2. Tier and gates
 
-Tier 2: a published page the whole leadership team reads. Critic gate
+Tier 2: a published page the whole leadership team reads. The agent opens
+with `hap_gate: tier=2 allow_build=true critic=required`. Critic gate
 **mandatory**. Reference artefact: the last funded briefing, 640 words.
 
 ## 3. Prior art and sources
 
-Memory search returns the customer's earlier requests and a related decision
+The memory adapter's search returns the customer's earlier requests and a related decision
 from last year. The agent treats these as leads and verifies against the
 system of record: the product knowledge base for what the platform supports
 today, the ticket tracker for the actual customer request, the CRM for which
@@ -46,7 +47,7 @@ Exact product names checked against the naming glossary.
 ## 6. QA and critic
 
 QA: page published, opened, links resolve, numbers trace, names exact, index
-updated. Critic (fresh agent, briefed as a sceptical CFO and pointed at the
+updated. Critic (the critic role in a fresh context, briefed as a sceptical CFO and pointed at the
 premises): flags one **blocker** — the cost estimate cites a sales deck's
 "two-week integration" claim; the engineering estimate in the tracker says
 six. Fixed, re-verified. One minor: cut the paragraph on how the request came

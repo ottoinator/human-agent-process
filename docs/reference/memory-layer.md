@@ -37,13 +37,13 @@ Presence is searchable; absence requires walking the sources.
 
 One screen, not a log dump. Never secrets, HR-confidential material,
 unapproved confidential documents, raw dumps without a summary, or transient
-status. The full lists live in the global `CLAUDE.md`
-(`../../claude/CLAUDE.md`); an adapter may add stricter ones.
+status. The full lists live in the core rule
+`core/policy/core/70-memory-adapter.md`; an adapter may add stricter ones.
 
 ## The memory adapter contract
 
 The process does not depend on a particular store. It depends on a **memory
-adapter**: a skill or plugin that the global `CLAUDE.md` names under
+adapter**: a skill or plugin that the installed instruction block names under
 *Installed adapter*, and that provides:
 
 1. **Search** — a prior-art query the agent can run before work, with results
@@ -51,28 +51,31 @@ adapter**: a skill or plugin that the global `CLAUDE.md` names under
 2. **Capture** — an append path for a durable, compact, reusable entry, with
    the adapter's own write policy (automatic, proposed, or contract-bound).
 3. **A stored-documents listing**, so coverage can be audited source-first.
-4. **A *do not store* list** at least as strict as the one in the global
-   `CLAUDE.md`.
+4. **A *do not store* list** at least as strict as the core memory rule.
 5. **No delete.** The adapter exposes no destructive operation to the agent.
 6. **An honest unavailable state** — when the store is unreachable the adapter
    says so, and the process skills report that prior-art search and capture
    could not run.
 
-The process skills refer only to "the memory adapter"; the adapter's block in
-`CLAUDE.md` (`../../claude/memory/`) carries its commands and its capture
-policy. Swapping the store means swapping that block and the adapter skill,
-not editing the process.
+The process skills refer only to "the memory adapter"; the adapter's own
+block carries its commands and its capture policy. Swapping the store means
+swapping that block and the adapter skill, not editing the process. See
+[the memory adapter concept](../concepts/memory-adapter.md).
 
 Claude Code's own auto-memory (`MEMORY.md`) is working memory for one machine
 and one project, not an adapter: it has no search across projects and no
 capture policy.
 
-## Reference adapter
+## Example adapter
 
-This repository ships one adapter: a local [LightRAG](https://github.com/HKUDS/LightRAG)
-container as the store (`../../memory/`), the `lightrag-local` skill as the
-client (`../../claude/skills/lightrag-local/`), and the block
-`../../claude/memory/lightrag.md` for the global `CLAUDE.md`. Its capture
+The repository ships one example, not a default: a local
+[LightRAG](https://github.com/HKUDS/LightRAG) container as the store
+([service](../../examples/memory-adapter-lightrag/service/README.md)), a
+client skill
+([skill](../../examples/memory-adapter-lightrag/skill/SKILL.md)), and an
+instruction block
+([adapter block](../../examples/memory-adapter-lightrag/adapter-block.md)).
+Its capture
 policy is *automatic and silent*. Three lessons that transfer to any adapter:
 
 - **Name the source on the first write.** Dedupe is by content hash; a bad

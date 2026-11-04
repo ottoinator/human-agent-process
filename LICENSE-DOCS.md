@@ -1,12 +1,14 @@
-# Documentation License
+# Documentation Licence
 
-Documentation and process text in this repository are licensed under the
-Creative Commons Attribution 4.0 International License.
+Documentation, skills, rule text, and process text in this repository are
+licensed under the Creative Commons Attribution 4.0 International Licence
+(CC BY 4.0). Copyright Rene Otto.
 
-You may share and adapt the documentation for any purpose, including commercial
-use, as long as you provide appropriate attribution.
+You may share and adapt them for any purpose, including commercial use, as
+long as you give appropriate credit, link to the licence, and indicate if you
+made changes.
 
-License text: <https://creativecommons.org/licenses/by/4.0/>
+Licence text: <https://creativecommons.org/licenses/by/4.0/>
 
-Code, scripts, and copyable templates are licensed separately under the MIT
-License in [LICENSE](LICENSE).
+Code (scripts, tests, shell, `.mjs`, JSON) is licensed separately under the
+MIT Licence in [LICENSE](LICENSE). Path-level assignment is in `REUSE.toml`.

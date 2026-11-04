@@ -12,9 +12,12 @@ success signal (running with the flag produces the same plan as a real run and
 touches nothing), quality bar (internal tool, no release), disappointment risk
 (a dry run that still writes, or a preview that differs from the real run).
 
-## 2. Context and tier
+## 2. Context, tier, start gate
 
 The repo commits straight to `main`, has a test suite (`npm test`), no CI.
+The agent opens with `hap_gate: tier=2 allow_build=true critic=required`
+after writing the short start-gate record (goal, acceptance check with one
+must-pass and one must-fail case, no owner questions).
 Tier 2: multi-file, changes runtime behaviour. Critic gate: **advisory** —
 the tool's only consumer is its author, nothing runs unattended. The agent
 decides to run it anyway because the disappointment risk is a silent write.
@@ -26,7 +29,7 @@ the existing log style. Stated as assumptions.
 
 ## 4. Prior art
 
-Memory search finds a lesson from another tool: "dry-run implemented as a
+If a memory adapter is installed, its search finds a lesson from another tool: "dry-run implemented as a
 boolean threaded through every writer — missed one; centralise the write path
 first." Agent verifies the current code has two write sites and refactors
 them behind one function before adding the flag.
@@ -38,7 +41,7 @@ and identical plan output under the flag. `npm test` passes.
 
 ## 6. Critic
 
-A fresh general-purpose agent, briefed as "the owner, six months from now,
+The critic role in a fresh context, briefed as "the owner, six months from now,
 trusting the dry run": finds that the flag is not mentioned in `--help`
 (minor) and that a failed network fetch under dry-run still logs "would
 write" for stale data (major — a misleading preview). Agent fixes both,
@@ -46,7 +49,7 @@ re-runs the tests.
 
 ## 7. Land, capture, report
 
-Commits to `main` per the repo's convention. Captures a runbook entry:
+Commits to `main` per the repo's convention. Captures a runbook entry through the adapter:
 "centralise the write path before adding dry-run; make dry-run surface fetch
 failures rather than previewing stale data."
 

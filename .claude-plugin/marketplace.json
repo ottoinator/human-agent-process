@@ -1,0 +1,14 @@
+{
+  "name": "human-agent-process",
+  "owner": {
+    "name": "Rene Otto"
+  },
+  "plugins": [
+    {
+      "name": "human-agent-process",
+      "source": "./plugins/human-agent-process",
+      "description": "Human-agent process: owner boundary, tiers, critic gate, QA and evidence rules, and workflow skills; four subagent roles come with the Claude plugin and the Codex installer.",
+      "version": "2.0.0"
+    }
+  ]
+}
