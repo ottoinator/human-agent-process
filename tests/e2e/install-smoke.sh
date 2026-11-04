@@ -94,5 +94,11 @@ CH4="$T/claude4"; XH4="$T/codex4"
 check "block has content via symlinked path (claude)" "[ \$(blocks '$CH4/CLAUDE.md') -eq 1 ] && grep -q '## Owner boundary' '$CH4/CLAUDE.md'"
 check "block has content via symlinked path (codex)" "[ \$(blocks '$XH4/AGENTS.md') -eq 1 ] && grep -q '## Owner boundary' '$XH4/AGENTS.md'"
 
+# Default install (no --*-home, no env) must not set CLAUDE_CONFIG_DIR/CODEX_HOME for the CLIs.
+: > "$T/calls.log"
+(env -u CLAUDE_CONFIG_DIR -u CODEX_HOME HOME="$T/home5" PATH="$FB:$PATH" bash "$INSTALL" --both >/dev/null 2>&1)
+check "default install leaves CLAUDE_CONFIG_DIR unset" "grep -q 'claude CLAUDE_CONFIG_DIR= plugin install' '$T/calls.log'"
+check "default install leaves CODEX_HOME unset" "grep -q 'codex CODEX_HOME= plugin add' '$T/calls.log'"
+
 echo "failures: $FAILS"
 [ "$FAILS" -eq 0 ]

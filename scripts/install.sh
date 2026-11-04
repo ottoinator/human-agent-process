@@ -11,6 +11,7 @@ CLAUDE_HOME="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 CODEX_HOME_DIR="${CODEX_HOME:-$HOME/.codex}"
 AGENTS_SKILLS="${AGENTS_SKILLS_DIR:-}"
 CODEX_HOME_FLAG=0
+CLAUDE_HOME_FLAG=0
 DRY=0; UNINSTALL=0; MIGRATE=0; FORCE=0; PLUGIN_CMD=1
 
 usage() {
@@ -27,7 +28,7 @@ while [ $# -gt 0 ]; do
     --codex) TARGET=codex ;;
     --both) TARGET=both ;;
     --modules) MODULES="${2:?--modules needs a value}"; shift ;;
-    --claude-home) CLAUDE_HOME="${2:?}"; shift ;;
+    --claude-home) CLAUDE_HOME="${2:?}"; CLAUDE_HOME_FLAG=1; shift ;;
     --codex-home) CODEX_HOME_DIR="${2:?}"; CODEX_HOME_FLAG=1; shift ;;
     --dry-run) DRY=1 ;;
     --uninstall) UNINSTALL=1 ;;
@@ -49,7 +50,9 @@ if [ -z "$AGENTS_SKILLS" ]; then
   if [ "$CODEX_HOME_FLAG" = 1 ]; then AGENTS_SKILLS="$CODEX_HOME_DIR/skills"; else AGENTS_SKILLS="$HOME/.agents/skills"; fi
 fi
 # Plugin commands must act on the same homes as the files we write.
-export CLAUDE_CONFIG_DIR="$CLAUDE_HOME" CODEX_HOME="$CODEX_HOME_DIR"
+# Point the plugin commands at the chosen homes, but leave defaults untouched.
+if [ "$CLAUDE_HOME_FLAG" = 1 ] || [ -n "${CLAUDE_CONFIG_DIR:-}" ]; then export CLAUDE_CONFIG_DIR="$CLAUDE_HOME"; fi
+if [ "$CODEX_HOME_FLAG" = 1 ] || [ -n "${CODEX_HOME:-}" ]; then export CODEX_HOME="$CODEX_HOME_DIR"; fi
 STAMP="$(date +%Y%m%d%H%M%S)"
 DRYFLAG=""; if [ "$DRY" = 1 ]; then DRYFLAG="--dry-run"; fi
 TMP="$(mktemp -d)"; trap 'rm -rf "${TMP:?}"' EXIT
