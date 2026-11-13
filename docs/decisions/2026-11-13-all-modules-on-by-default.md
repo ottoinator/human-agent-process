@@ -37,9 +37,9 @@ all default modules except those. `--modules a,b` still selects an exact set,
 
 ## Consequences
 
-- The all-modules block is about 10.8 KB (Claude) and 11.3 KB (Codex), under
+- The all-modules block is about 10.9 KB (Claude) and 11.4 KB (Codex), under
   the 12 KB limit the build enforces. New modules now compete for the last
-  0.7 KB and must stay short or replace text.
+  0.6 KB and must stay short or replace text.
 - Existing installs keep the modules recorded in their block until the owner
   reruns the installer; rerunning without `--modules` now installs all.
 - The runs in `docs/start/see-it-work.md` were recorded with the 2.0.0
