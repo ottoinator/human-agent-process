@@ -9,7 +9,7 @@ It is documentation, skills, and installer code, not an application runtime.
 ```text
 core/                      the only hand-edited source of rules
   policy/core/             always-on rules (owner boundary, tiers + start gate, roles, critic, QA, memory)
-  policy/modules/          optional modules (growth, concurrency, routines, impact-map, second-opinion, design-reference, remote-review)
+  policy/modules/          modules, all on by default (growth, concurrency, routines, impact-map, second-opinion, design-reference, remote-review)
   platforms/               per-platform notes
   roles/                   critic, implementer, qa-runner, researcher
 plugins/human-agent-process/skills/   platform-neutral skills (hand-edited)

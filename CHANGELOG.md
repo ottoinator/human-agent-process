@@ -4,8 +4,8 @@
 
 - **All modules are on by default.** impact-map, second-opinion,
   design-reference, and remote-review were off in 2.0.0. Their rules now gate
-  themselves (impact inventory from Tier 2 or on shared interfaces, second
-  opinion records `unavailable` without another model, remote review asks
+  themselves (system map only once a repository has several components, second
+  opinion only through a call the owner set up, otherwise `unavailable`, remote review asks
   once which device the owner reviews on). Switch modules off with a minus
   prefix: `--modules -remote-review`. Rerunning the installer without
   `--modules` now installs all modules. Decision record:

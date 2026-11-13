@@ -85,6 +85,9 @@ test("all modules are on by default; -name opts out", () => {
   assert.deepEqual(out, all.filter((id) => !["remote-review", "impact-map"].includes(id)));
   assert.throws(() => resolveModules("-nope", modules), /unknown module: nope/);
   assert.throws(() => resolveModules("growth,-routines", modules), /mix of module names/);
+  assert.throws(() => resolveModules("-", modules), /empty module name/);
+  assert.throws(() => resolveModules("", modules), /needs a value/);
+  assert.deepEqual(resolveModules("- growth", modules), all.filter((id) => id !== "growth"));
 });
 
 test("fixture: oversized module makes the build fail", () => {

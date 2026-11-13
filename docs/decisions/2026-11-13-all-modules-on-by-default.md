@@ -18,11 +18,14 @@ Every module is on by default. Each module rule gates itself, so a rule that
 does not apply costs only its text in the block:
 
 - impact-map: a system map once a repository has more than a handful of
-  components; an inventory on Tier 2+ changes and on Tier 1 changes that touch
-  a shared interface, from a consumer search when no map exists.
-- second-opinion: only under money or statistics risk; without a model from
-  another family the report records `second_opinion: unavailable` and the
-  work continues.
+  components; the inventory on every Tier 1+ change stays, built from a
+  consumer search when no map exists.
+- second-opinion: the two existing triggers stay (money or statistics risk, a
+  contradiction that survives one local check). It consults only through a
+  call and quota the owner has set up, never a model that merely happens to be
+  reachable; without one the report records `second_opinion: unavailable`.
+  The brief carries no secrets, credentials, or private data. Sending data to
+  another vendor stays an owner choice, made by setting up that call.
 - design-reference: only user-facing Tier 2/3 work.
 - remote-review: the link must open on the device the owner reviews on; the
   agent asks once at intake if it does not know that device; exposing

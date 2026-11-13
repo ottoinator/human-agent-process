@@ -86,14 +86,16 @@ new products, and anything where a wrong "done" is expensive.
 - **Reports a human can read in a minute.** Done, what is needed from you,
   and a link to look at the result. Technical evidence goes to a file or a
   short trailing section, not into the first paragraph.
-- **Results you can check from your phone.** The remote-review module ends every visible result with a link that works on your phone,
-  checked before it is sent.
+- **Results you can check from your phone.** The remote-review module ends
+  every visible result with a link that works on your phone, checked before
+  it is sent.
 - **Design from a real reference.** The design module starts
   user-facing work from a concrete screen, for example one generated with
   [Google Stitch](https://stitch.withgoogle.com/), and compares reference and
   result side by side on desktop and mobile. A result that looks more generic
   than its reference is not done.
-- **A second opinion from another model.** The second-opinion module lets the lead consult a different model family (Codex for a Claude lead, or
+- **A second opinion from another model.** The second-opinion module lets
+  the lead consult a different model family (Codex for a Claude lead, or
   Claude for a Codex lead) where money or a statistical verdict depends on
   assumptions. One brief, one call, a fixed quota, and the lead decides. You
   provide the call; the module sets when, how often, and how the answer is
@@ -198,7 +200,7 @@ set with `--modules a,b`.
 | [concurrency](docs/modules/concurrency.md) | automation writes into a repo or shared state |
 | [routines](docs/modules/routines.md) | a plan promises recurring jobs |
 | [impact-map](docs/modules/impact-map.md) | a change can leave other parts of the system stale |
-| [second-opinion](docs/modules/second-opinion.md) | money or statistics depend on assumptions |
+| [second-opinion](docs/modules/second-opinion.md) | money or statistics depend on assumptions, or findings contradict each other; uses only a call you set up |
 | [design-reference](docs/modules/design-reference.md) | user-facing work (screens, pages, visual reports) |
 | [remote-review](docs/modules/remote-review.md) | a result can be looked at; the link works on the device you review on |
 

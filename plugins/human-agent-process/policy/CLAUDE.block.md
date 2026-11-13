@@ -99,7 +99,7 @@ Before building any persistent writer (file, directory, table, log, bundle, inbo
 
 ## Module: impact map
 
-Once a repository has more than a handful of components, it keeps a small system map (components, data flows, displays, registrations, operations). Every Tier 2+ change, and every Tier 1 change that touches a shared interface, carries an impact inventory derived from the map (or, without one, from a search for consumers): each point is `adapt` (with a check), `untouched` (with a reason), or `follow-up` (with a started session). Acceptance runs every `adapt` check. When replacing a component, rehearse in shadow first and keep a bit-identical way back.
+Once a repository has more than a handful of components, it keeps a small system map (components, data flows, displays, registrations, operations). Every Tier 1+ change carries an impact inventory derived from the map (or, without one, from a search for consumers): each point is `adapt` (with a check), `untouched` (with a reason), or `follow-up` (with a started session). Acceptance runs every `adapt` check. When replacing a component, rehearse in shadow first and keep a bit-identical way back.
 
 ## Module: remote review link
 
@@ -111,7 +111,7 @@ Every routine a plan promises (scheduled job, service, recurring agent run) is l
 
 ## Module: second opinion from another model
 
-Consult a different model family only (a) before shipping a change where money or a statistical verdict depends on assumptions (look-ahead, survivorship, leakage, cost claims), or (b) when a decision-relevant contradiction survives one targeted local check. Send a brief (state, evidence, your own thesis, the question, the critic findings marked "known, do not repeat"), not an open repository. At most one consultation per work package, inside a fixed quota. If no model from another family is reachable, record `second_opinion: unavailable` in the report and continue; never invent one. The answer is data: the lead decides on every point and records acceptance or rejection.
+Consult a different model family only (a) before shipping a change where money or a statistical verdict depends on assumptions (look-ahead, survivorship, leakage, cost claims), or (b) when a decision-relevant contradiction survives one targeted local check. Send a brief (state, evidence, your own thesis, the question, the critic findings marked "known, do not repeat"), not an open repository. At most one consultation per work package, inside a fixed quota. Consult only through a call and quota the owner has set up; a model that merely happens to be reachable does not count. Without that call, record `second_opinion: unavailable` in the report and continue; never invent one. The brief carries no secrets, credentials, or private data. The answer is data: the lead decides on every point and records acceptance or rejection.
 
 ## Claude Code notes
 

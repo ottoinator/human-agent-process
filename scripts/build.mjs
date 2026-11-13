@@ -49,10 +49,13 @@ export function resolveModules(spec, modules) {
   if (spec === "all") return all;
   if (spec === "none") return [];
   if (spec === "default") return modules.filter((m) => m.meta.default === "on").map((m) => m.id);
+  if (typeof spec !== "string" || !spec.trim()) throw new Error("--modules needs a value: default|all|none|a,b|-a,-b");
   const want = spec.split(",").map((s) => s.trim()).filter(Boolean);
+  if (!want.length) throw new Error("--modules needs at least one module name");
   // Opt-out: "-a,-b" means every default-on module except a and b.
-  if (want.length && want.every((w) => w.startsWith("-"))) {
-    const drop = want.map((w) => w.slice(1));
+  if (want.every((w) => w.startsWith("-"))) {
+    const drop = want.map((w) => w.slice(1).trim());
+    if (drop.some((d) => !d)) throw new Error("empty module name after '-'");
     for (const d of drop) if (!all.includes(d)) throw new Error(`unknown module: ${d} (known: ${all.join(", ")})`);
     return modules.filter((m) => m.meta.default === "on" && !drop.includes(m.id)).map((m) => m.id);
   }
