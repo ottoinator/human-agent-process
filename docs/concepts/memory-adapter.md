@@ -16,5 +16,8 @@ stored documents, a do-not-store list, no delete, and an honest unavailable
 state. The full contract is in the
 [memory layer reference](../reference/memory-layer.md); a worked example is
 [the LightRAG adapter](../../examples/memory-adapter-lightrag/README.md).
+Any store with search and a write path fits the same contract: a local
+knowledge graph, a vector database, a hosted memory service, or a folder of
+Markdown files. New adapters are welcome as examples.
 The decision record is
 [memory adapter](../decisions/2026-09-10-memory-adapter.md).

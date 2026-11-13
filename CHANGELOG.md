@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+Documentation only; no rule, skill, or installer change.
+
+- README rewritten for people: what you can hand over, a comparison with
+  plain Claude Code and Codex, highlights, both platforms side by side.
+  Decision record: `docs/decisions/2026-11-13-readme-for-people.md`.
+- New `docs/start/see-it-work.md`: two recorded runs with and without the
+  process.
+- Module pages name concrete tools: Google Stitch for the design reference,
+  the other platform for the second opinion; the memory adapter page lists
+  kinds of stores that fit.
+
 ## 2.0.0 - 2026-11-04
 
 One shared core, two generated distributions: a Claude Code plugin and a Codex

@@ -7,6 +7,7 @@
 - [README](README.md): what it is, quickstart for both platforms, modules
 - [Install for agents](docs/start/install-for-agents.md): exact steps and the verification (`hap_gate:` line)
 - [Quickstart](docs/start/quickstart.md): five minutes
+- [See it work](docs/start/see-it-work.md): two real runs with and without the process
 
 ## Concepts
 

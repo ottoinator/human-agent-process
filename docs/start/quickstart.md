@@ -57,5 +57,6 @@ loaded; see [install for agents](install-for-agents.md).
 
 ## Next
 
+- [See it work](see-it-work.md): two real runs, with and without the process
 - [Tiers and the start gate](../concepts/tiers-and-start-gate.md)
 - [Why the rules exist](../why/happy-path-done.md)
