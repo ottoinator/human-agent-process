@@ -29,4 +29,5 @@ while the rule text in `core/` stays tool-neutral.
   claim, `human-validation-missing` stays visible.
 - The recorded runs carry a date. When rules change materially, re-record
   them or mark them as recorded with an older version.
-- No rule, skill, or installer change; generated distributions are untouched.
+- No rule, skill, or installer change in this decision; the module default
+  change of the same day has its own record.

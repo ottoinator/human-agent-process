@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-Documentation only; no rule, skill, or installer change.
+- **All modules are on by default.** impact-map, second-opinion,
+  design-reference, and remote-review were off in 2.0.0. Their rules now gate
+  themselves (impact inventory from Tier 2 or on shared interfaces, second
+  opinion records `unavailable` without another model, remote review asks
+  once which device the owner reviews on). Switch modules off with a minus
+  prefix: `--modules -remote-review`. Rerunning the installer without
+  `--modules` now installs all modules. Decision record:
+  `docs/decisions/2026-11-13-all-modules-on-by-default.md`.
 
 - README rewritten for people: what you can hand over, a comparison with
   plain Claude Code and Codex, highlights, both platforms side by side.

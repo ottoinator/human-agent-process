@@ -77,6 +77,16 @@ test("policy block with all modules stays within the limit", () => {
   }
 });
 
+test("all modules are on by default; -name opts out", () => {
+  const { modules } = loadCore();
+  const all = resolveModules("all", modules);
+  assert.deepEqual(resolveModules("default", modules), all);
+  const out = resolveModules("-remote-review,-impact-map", modules);
+  assert.deepEqual(out, all.filter((id) => !["remote-review", "impact-map"].includes(id)));
+  assert.throws(() => resolveModules("-nope", modules), /unknown module: nope/);
+  assert.throws(() => resolveModules("growth,-routines", modules), /mix of module names/);
+});
+
 test("fixture: oversized module makes the build fail", () => {
   const dir = tempCopy();
   const f = path.join(dir, "core/policy/modules/growth.md");

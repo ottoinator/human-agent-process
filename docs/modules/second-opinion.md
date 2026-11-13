@@ -1,10 +1,11 @@
 # Module: second opinion
 
-**Default: off.**
+**Default: on.** Switch it off with `--modules -second-opinion`.
 
-Switch it on when money or a statistical verdict depends on assumptions, such
-as look-ahead, survivorship, leakage, or cost claims, and you have access to a
-model from another family. Consult only (a) before shipping such a change, or
+It acts only when money or a statistical verdict depends on assumptions, such
+as look-ahead, survivorship, leakage, or cost claims. Without access to a
+model from another family it records `second_opinion: unavailable` and
+continues. Consult only (a) before shipping such a change, or
 (b) when a decision-relevant contradiction survives one targeted local check.
 Send a brief (state, evidence, your thesis, the question, the critic findings
 marked "known, do not repeat"), never an open repository. At most one
@@ -17,6 +18,7 @@ from the command line, so a short wrapper that sends the brief and enforces
 the quota is enough. Any other model family works too.
 
 **Cost:** one external call per package and the quota it burns. It is not a
-second review gate: general review stays with the critic.
+second review gate: general review stays with the critic. Work without money
+or statistics risk pays nothing.
 
 Rule text: `core/policy/modules/second-opinion.md`.

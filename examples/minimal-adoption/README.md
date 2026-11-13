@@ -49,8 +49,9 @@ and why.
 
 - A memory adapter ([example](../memory-adapter-lightrag/README.md)) once you
   notice yourself re-explaining context to the agent.
-- Modules (`scripts/install.sh --modules all`) as the matching risks appear;
-  see [the module pages](../../docs/modules/growth.md).
+- Nothing to add for modules: all are on by default and act only when their
+  situation comes up. Switch one off with `--modules -name`; see
+  [the module pages](../../docs/modules/growth.md).
 - A project `AGENTS.md` (`templates/project/AGENTS.md`) once the repo has
   conventions worth writing down: a QA command, protected paths, names that
   must be spelled right.

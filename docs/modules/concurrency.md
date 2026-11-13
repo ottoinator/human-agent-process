@@ -1,6 +1,6 @@
 # Module: concurrency
 
-**Default: on.**
+**Default: on.** Switch it off with `--modules -concurrency`.
 
 Switch it on when an automated writer (scheduled job, agent, script) writes
 into a git repository or shared state. Before building it, state the write

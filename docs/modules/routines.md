@@ -1,6 +1,6 @@
 # Module: routines
 
-**Default: on.**
+**Default: on.** Switch it off with `--modules -routines`.
 
 Switch it on when a plan promises something that runs repeatedly: a scheduled
 job, a service, a recurring agent run. Each routine is listed machine-readably

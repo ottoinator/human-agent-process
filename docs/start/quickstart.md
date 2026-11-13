@@ -31,14 +31,15 @@ scripts/install.sh --codex
 The script writes a managed block into your `AGENTS.md` and the role agents
 into your agents directory.
 
-## Both, or more modules
+## Both, or fewer modules
 
 ```bash
-scripts/install.sh --both --modules all
-scripts/install.sh --claude --modules growth,routines
+scripts/install.sh --both                              # all modules (default)
+scripts/install.sh --claude --modules -remote-review    # all but one
+scripts/install.sh --claude --modules growth,routines   # exact set
 ```
 
-Modules are optional rule sets; see the [module pages](../modules/growth.md).
+Modules are extra rule sets, all on by default; see the [module pages](../modules/growth.md).
 Existing 1.x install: add `--migrate-from-1x`. Remove everything again with
 `--uninstall`.
 

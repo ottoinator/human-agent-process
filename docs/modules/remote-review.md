@@ -1,14 +1,16 @@
 # Module: remote review
 
-**Default: off.**
+**Default: on.** Switch it off with `--modules -remote-review`.
 
-Switch it on when the owner reviews results on a phone or another device.
-Every visible or browsable result ends with a link reachable from the owner's
-device (private network or HTTPS), checked for a successful response.
-Localhost and file paths only ever appear in addition. If no route exists,
+Every visible or browsable result ends with a link the owner can open on the
+device they review on, checked for a successful response. If the agent does
+not know that device, it asks once at intake. For a phone or another device
+the link must be reachable from it (private network or HTTPS); localhost and
+file paths only ever appear in addition. Exposing anything to the public
+internet stays an owner decision. If no route exists,
 report `Review link blocked: <reason>` with the next step.
 
-**Cost:** a reachable route per reviewable result. Leave it off when the owner
-works at the same machine.
+**Cost:** a reachable route per reviewable result. When the owner
+reviews at the same machine, a local link is enough.
 
 Rule text: `core/policy/modules/remote-review.md`.

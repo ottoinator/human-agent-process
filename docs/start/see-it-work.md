@@ -6,7 +6,8 @@ only difference: one run had the Human-Agent Process plugin and rules block
 loaded, the other had nothing. Output is shortened where marked
 with `...`; nothing was rewritten. Local paths are replaced by `<folder>`.
 Recorded with Claude Code, one run per setup, not repeated or selected; Codex
-was not recorded for this page.
+was not recorded for this page. Recorded with the 2.0.0 module defaults
+(four modules off); neither run exercised a module.
 
 ## Run 1: a new product from a one-line wish
 

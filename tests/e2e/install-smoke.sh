@@ -32,6 +32,7 @@ run --both; check "second install exits 0" "[ \$? -eq 0 ]"
 check "still one claude block" "[ \$(blocks '$CH/CLAUDE.md') -eq 1 ]"
 check "still one codex block" "[ \$(blocks '$XH/AGENTS.md') -eq 1 ]"
 run --both --modules all; check "module change replaces in place" "[ \$(blocks '$CH/CLAUDE.md') -eq 1 ] && grep -q 'modules=.*routines' '$CH/CLAUDE.md'"
+run --both --modules -remote-review,-impact-map; check "module opt-out" "grep -q 'modules=.*routines' '$CH/CLAUDE.md' && ! grep -q 'modules=.*remote-review' '$CH/CLAUDE.md'"
 run --both --modules none; check "modules none" "grep -q 'modules=none' '$CH/CLAUDE.md' && [ \$(blocks '$CH/CLAUDE.md') -eq 1 ]"
 check "backup created once" "[ \$(ls '$CH'/CLAUDE.md.hap-backup-* | wc -l) -eq 1 ]"
 

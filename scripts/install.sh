@@ -16,7 +16,7 @@ DRY=0; UNINSTALL=0; MIGRATE=0; FORCE=0; PLUGIN_CMD=1
 
 usage() {
   cat <<USAGE
-Usage: scripts/install.sh [--claude|--codex|--both] [--modules a,b|default|all|none]
+Usage: scripts/install.sh [--claude|--codex|--both] [--modules default|all|none|a,b|-a,-b]
   [--claude-home DIR] [--codex-home DIR] [--dry-run] [--uninstall]
   [--migrate-from-1x] [--force] [--no-plugin-cmd]
 USAGE

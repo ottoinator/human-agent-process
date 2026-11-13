@@ -1,6 +1,6 @@
 # Module: growth
 
-**Default: on.**
+**Default: on.** Switch it off with `--modules -growth`.
 
 Switch it on when anything you build keeps writing: a file, directory, table,
 log, bundle, or inbox. Before building such a writer the plan states the write

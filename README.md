@@ -67,8 +67,8 @@ a way of working. These are the gaps the process closes:
 | call it done after the happy path worked | "done" needs a runnable check with one case that must pass and one that must fail, seen green |
 | run tests however it likes | runs QA in your project's isolated harness, or reports `blocked` instead of pretending |
 | answer in commit hashes and stack traces | reports in three parts: **Done**, **Needed from you**, **Link** |
-| forget the places that depend on a change | optional impact map lists every consumer before the build |
-| let logs and caches grow until the disk is full | optional growth contract: every writer declares its size limit |
+| forget the places that depend on a change | the impact map lists every consumer before the build |
+| let logs and caches grow until the disk is full | the growth contract: every writer declares its size limit |
 | burn tokens with many parallel helpers | cost contract: one role per gate, at most two helpers, turn budgets |
 
 For a one-line fix the difference is small, and that is intended: the
@@ -86,16 +86,14 @@ new products, and anything where a wrong "done" is expensive.
 - **Reports a human can read in a minute.** Done, what is needed from you,
   and a link to look at the result. Technical evidence goes to a file or a
   short trailing section, not into the first paragraph.
-- **Results you can check from your phone.** The optional remote-review
-  module ends every visible result with a link that works on your phone,
+- **Results you can check from your phone.** The remote-review module ends every visible result with a link that works on your phone,
   checked before it is sent.
-- **Design from a real reference.** The optional design module starts
+- **Design from a real reference.** The design module starts
   user-facing work from a concrete screen, for example one generated with
   [Google Stitch](https://stitch.withgoogle.com/), and compares reference and
   result side by side on desktop and mobile. A result that looks more generic
   than its reference is not done.
-- **A second opinion from another model.** The optional second-opinion module
-  lets the lead consult a different model family (Codex for a Claude lead, or
+- **A second opinion from another model.** The second-opinion module lets the lead consult a different model family (Codex for a Claude lead, or
   Claude for a Codex lead) where money or a statistical verdict depends on
   assumptions. One brief, one call, a fixed quota, and the lead decides. You
   provide the call; the module sets when, how often, and how the answer is
@@ -106,7 +104,7 @@ new products, and anything where a wrong "done" is expensive.
   [LightRAG adapter](examples/memory-adapter-lightrag/README.md) ships as an
   example; other stores plug in through the same
   [contract](docs/reference/memory-layer.md). No store at all also works.
-- **Guardrails from real failures.** Optional modules for growing files,
+- **Guardrails from real failures.** Modules for growing files,
   automation writing into shared repos, promised recurring jobs, and
   forgotten consumers. Each one exists because something broke
   ([the stories](docs/why/README.md)).
@@ -159,10 +157,10 @@ cd human-agent-process
 scripts/install.sh --codex
 ```
 
-Both, with all modules, preview first:
+Both, preview first (all modules are on by default):
 
 ```bash
-scripts/install.sh --both --modules all --dry-run
+scripts/install.sh --both --dry-run
 ```
 
 Check that it works: ask your agent "Add a dark-mode toggle to the settings
@@ -189,17 +187,20 @@ tools) can see the classification at a glance:
 
 ## Modules
 
-Optional rule sets; install with `--modules default|all|a,b`.
+Extra rule sets, all on by default. Each one acts only when its situation
+comes up, so a module that does not apply costs nothing. Switch one off with
+`--modules -name` (for example `--modules -remote-review`), or pick an exact
+set with `--modules a,b`.
 
-| Module | Default | Switch it on when |
-| --- | --- | --- |
-| [growth](docs/modules/growth.md) | on | something keeps writing (files, logs, tables) |
-| [concurrency](docs/modules/concurrency.md) | on | automation writes into a repo or shared state |
-| [routines](docs/modules/routines.md) | on | a plan promises recurring jobs |
-| [impact-map](docs/modules/impact-map.md) | off | many components, easy to forget consumers |
-| [second-opinion](docs/modules/second-opinion.md) | off | money or statistics depend on assumptions |
-| [design-reference](docs/modules/design-reference.md) | off | user-facing work |
-| [remote-review](docs/modules/remote-review.md) | off | you review results on a phone |
+| Module | Acts when |
+| --- | --- |
+| [growth](docs/modules/growth.md) | something keeps writing (files, logs, tables) |
+| [concurrency](docs/modules/concurrency.md) | automation writes into a repo or shared state |
+| [routines](docs/modules/routines.md) | a plan promises recurring jobs |
+| [impact-map](docs/modules/impact-map.md) | a change can leave other parts of the system stale |
+| [second-opinion](docs/modules/second-opinion.md) | money or statistics depend on assumptions |
+| [design-reference](docs/modules/design-reference.md) | user-facing work (screens, pages, visual reports) |
+| [remote-review](docs/modules/remote-review.md) | a result can be looked at; the link works on the device you review on |
 
 ## Documentation
 

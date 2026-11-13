@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Generator: core/ -> plugin manifests, agents, policy blocks, marketplaces.
-// Usage: node scripts/build.mjs [--check] | --block claude|codex --modules a,b|default|all|none
+// Usage: node scripts/build.mjs [--check] | --block claude|codex --modules default|all|none|a,b|-a,-b
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -50,6 +50,13 @@ export function resolveModules(spec, modules) {
   if (spec === "none") return [];
   if (spec === "default") return modules.filter((m) => m.meta.default === "on").map((m) => m.id);
   const want = spec.split(",").map((s) => s.trim()).filter(Boolean);
+  // Opt-out: "-a,-b" means every default-on module except a and b.
+  if (want.length && want.every((w) => w.startsWith("-"))) {
+    const drop = want.map((w) => w.slice(1));
+    for (const d of drop) if (!all.includes(d)) throw new Error(`unknown module: ${d} (known: ${all.join(", ")})`);
+    return modules.filter((m) => m.meta.default === "on" && !drop.includes(m.id)).map((m) => m.id);
+  }
+  if (want.some((w) => w.startsWith("-"))) throw new Error("mix of module names and -opt-outs; use either a,b or -a,-b");
   for (const w of want) if (!all.includes(w)) throw new Error(`unknown module: ${w} (known: ${all.join(", ")})`);
   return all.filter((id) => want.includes(id));
 }

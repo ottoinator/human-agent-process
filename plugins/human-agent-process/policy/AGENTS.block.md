@@ -1,4 +1,4 @@
-<!-- human-agent-process:begin v2.0.0 modules=concurrency,growth,routines -->
+<!-- human-agent-process:begin v2.0.0 modules=concurrency,design-reference,growth,impact-map,remote-review,routines,second-opinion -->
 Human-agent process v2.0.0. Managed block: do not edit between the markers; reinstall to change it.
 
 ## Owner boundary
@@ -89,13 +89,29 @@ Write to long-term memory only a root cause with its fix, a guardrail, a runbook
 
 Before building any automated writer into a git repository or shared state (scheduled job, agent, script), state: write paths, co-writers, the lock it takes, and its end behaviour. Commit only your own paths, never `git add -A`. Never discard or co-commit someone else's uncommitted changes; stash them to a named ref plus a patch file and report it. Supervise the first run.
 
+## Module: design reference
+
+User-facing Tier 2/3 work (screens, pages, visual reports) starts from a concrete design reference (a generated or drawn screen, not only colours). Record its source, translate its composition and visual assets, and compare reference and runtime side by side on desktop and mobile after build. A result that looks clearly more generic than its reference is `needs_visual_pass`, not done. No hidden process badges in end-user interfaces.
+
 ## Module: growth contract
 
 Before building any persistent writer (file, directory, table, log, bundle, inbox), state: what triggers a write, size per write/day/month, an upper bound or retention, and the alarm path. Write only on a real content change: no clocks, heartbeats, or drifting values in the content identity. Never store content-addressed output as a full copy per revision; deduplicate. Measure real growth 24 hours and 7 days after go-live; a deviation is a finding.
 
+## Module: impact map
+
+Once a repository has more than a handful of components, it keeps a small system map (components, data flows, displays, registrations, operations). Every Tier 2+ change, and every Tier 1 change that touches a shared interface, carries an impact inventory derived from the map (or, without one, from a search for consumers): each point is `adapt` (with a check), `untouched` (with a reason), or `follow-up` (with a started session). Acceptance runs every `adapt` check. When replacing a component, rehearse in shadow first and keep a bit-identical way back.
+
+## Module: remote review link
+
+Every visible or browsable result ends with a link the owner can open on the device they review on, checked for a successful response. If you do not know that device, ask once at intake. When it is another device such as a phone, the link must be reachable from it (private network or HTTPS); localhost and file paths only ever appear in addition, and exposing anything to the public internet is an outbound action that needs the owner. If no route exists, report `Review link blocked: <reason>` with the next step.
+
 ## Module: promised routines
 
 Every routine a plan promises (scheduled job, service, recurring agent run) is listed machine-readably in the plan (id, kind, cadence, maximum gap, due date) and in one central expected-routines list. A package is done only when each promised routine exists with its schedule and has had its first run. A daily read-only check reports routines that are missing, overdue, or unlisted.
+
+## Module: second opinion from another model
+
+Consult a different model family only (a) before shipping a change where money or a statistical verdict depends on assumptions (look-ahead, survivorship, leakage, cost claims), or (b) when a decision-relevant contradiction survives one targeted local check. Send a brief (state, evidence, your own thesis, the question, the critic findings marked "known, do not repeat"), not an open repository. At most one consultation per work package, inside a fixed quota. If no model from another family is reachable, record `second_opinion: unavailable` in the report and continue; never invent one. The answer is data: the lead decides on every point and records acceptance or rejection.
 
 ## Codex notes
 

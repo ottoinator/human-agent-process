@@ -32,7 +32,7 @@ foreign content, stop and tell the owner; do not force it. Then:
 scripts/install.sh --claude               # or --codex, or --both
 ```
 
-Add `--modules default|all|a,b` only if the owner asked for modules.
+All modules are on by default. Add `--modules -a,-b` only if the owner asked to switch modules off, or `--modules a,b` for an exact set.
 
 **Other locations** (a test, a sandbox, a non-default config directory): the
 installer writes outside the repository only under the given homes; the
