@@ -20,12 +20,17 @@ Agent: hap_gate: tier=3 allow_build=false critic=required
        This is a new product, so I need one round of clarification before I
        build anything. Each question has my recommendation, and "go with your
        recommendations" is a fine answer.
-       1. Who uses it? ... Recommendation: one community per installation, invite-only.
-       2. Sign-in? ...     Recommendation: username and password with a shared join code.
+       1. Who uses it? One street or building, or any neighbourhood?
+          Recommendation: One community per installation. ...
+       2. Sign-in: Email and password, magic link, or no accounts at all?
+          Recommendation: Username and password with a shared join code. ...
        ...
-       Plan once you answer: smallest end-to-end slice first, a critic reviews
-       the plan and the result, tests with known-pass and known-fail cases,
-       then I report back with a link to the running app.
+       Plan once you answer
+       - First, the smallest end-to-end slice: join, add a tool, request it,
+         approve it.
+       - Then a critic reviews the plan and, after the build, the result.
+       - Then tests with known-pass and known-fail cases, and I report back
+         with a link to the running app.
 ```
 
 That is an excerpt from a real run. The same prompt without the process made
@@ -46,7 +51,8 @@ Anything you would brief a small team on. A few examples:
 The process sizes itself to the request. A typo is done and verified in one
 step. A feature gets research, a plan, a critic before and after the build,
 and real tests. A new product gets one bundled round of questions first, and
-then no more interruptions until the result is ready.
+then no more questions until the result is ready, unless something on the
+short owner list comes up (money, deletion, anything public).
 
 ## Why not just use Claude Code or Codex as they are?
 
@@ -56,7 +62,7 @@ a way of working. These are the gaps the process closes:
 | Out of the box, an agent tends to... | With Human-Agent Process |
 | --- | --- |
 | start building a new product from a one-line wish | stops, asks all open questions **once**, each with a recommendation, then works through |
-| ask you about details it could decide itself | decides technical details alone and reports afterwards; asks only about money, deletion, anything public, new products |
+| ask you about details it could decide itself | decides technical details alone and reports afterwards; asks only about a short owner list: money, deletion, anything public, new products, stopping a running experiment |
 | review its own work and find it fine | an **independent critic** in a fresh context reviews the plan before and the result after the build |
 | call it done after the happy path worked | "done" needs a runnable check with one case that must pass and one that must fail, seen green |
 | run tests however it likes | runs QA in your project's isolated harness, or reports `blocked` instead of pretending |
@@ -91,7 +97,9 @@ new products, and anything where a wrong "done" is expensive.
 - **A second opinion from another model.** The optional second-opinion module
   lets the lead consult a different model family (Codex for a Claude lead, or
   Claude for a Codex lead) where money or a statistical verdict depends on
-  assumptions. One brief, one call, a fixed quota, and the lead decides.
+  assumptions. One brief, one call, a fixed quota, and the lead decides. You
+  provide the call; the module sets when, how often, and how the answer is
+  used.
 - **Memory that learns, with any store you like.** Long-term memory is an
   adapter: lessons, root causes, and guardrails are written to a store of
   your choice and searched before the next similar task. A complete
@@ -106,8 +114,9 @@ new products, and anything where a wrong "done" is expensive.
 ## Works with Claude Code and Codex
 
 One shared core, two generated distributions. The rules, roles, and skills are
-written once and built into a native plugin for each tool, so both behave the
-same way and stay in sync (CI fails on drift).
+written once and built into a native plugin for each tool, so both share the
+same rules, roles, and skills and stay in sync (CI fails on drift). The few
+remaining platform differences are listed in the notes below.
 
 ```mermaid
 flowchart LR

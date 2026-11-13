@@ -5,6 +5,8 @@ prompt, same empty folder, same permissions (read, write, run commands). The
 only difference: one run had the Human-Agent Process plugin and rules block
 loaded, the other had nothing. Output is shortened where marked
 with `...`; nothing was rewritten. Local paths are replaced by `<folder>`.
+Recorded with Claude Code, one run per setup, not repeated or selected; Codex
+was not recorded for this page.
 
 ## Run 1: a new product from a one-line wish
 
@@ -64,8 +66,9 @@ Needed from you: your answers to 1-5, or "go with your recommendations".
 
 ### Without it
 
-The agent started writing code straight away (four shell commands creating
-`package.json`, `server.js`, and `public/index.html`) and finished with:
+The agent started writing code straight away (one command wrote
+`package.json`, `server.js`, and `public/index.html` and tested the API with
+`curl`; two more fixed `package.json`) and finished with:
 
 ```text
 I've built a small tool-lending app called Toolshare. It has no dependencies,
@@ -122,12 +125,16 @@ Needed from you: Nothing.
 Link: <folder>/sync.py
 ```
 
-Without it, the agent made an equivalent change, ran the same check, and
-reported it in prose. Both took three to four steps.
+Without it, the agent made an equivalent change, ran an equivalent check (a
+byte-for-byte compare of `tasks.json`), and reported it in prose. Both needed
+two to three commands.
 
-That is on purpose. A small, reversible change gets Tier 1: no research, no
-critic, one verification, a short report. The process should cost nothing on
-trivial work and pay off where a wrong "done" is expensive.
+Here the process adds little, and that is intended: a small, reversible
+change is Tier 1, which means a short gate record, one verification, and a
+short report, with no research and no critic. To be exact about this run: the
+agent kept the gate record to the `hap_gate:` line and checked only the
+dry-run path, not the normal write path. The process should cost almost
+nothing on trivial work and pay off where a wrong "done" is expensive.
 
 ## Try it yourself
 
