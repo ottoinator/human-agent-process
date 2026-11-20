@@ -72,7 +72,7 @@ test("policy block with all modules stays within the limit", () => {
   for (const platform of ["claude", "codex"]) {
     const b = renderBlock(platform, ids, pkg.version, loaded);
     assert.ok(Buffer.byteLength(b) <= BLOCK_LIMIT, `${platform} block ${Buffer.byteLength(b)} bytes`);
-    assert.match(b, /^<!-- human-agent-process:begin v2\.0\.0 modules=.+ -->\n/);
+    assert.match(b, /^<!-- human-agent-process:begin v\d+\.\d+\.\d+ modules=.+ -->\n/);
     assert.ok(b.endsWith("<!-- human-agent-process:end -->\n"));
   }
 });
