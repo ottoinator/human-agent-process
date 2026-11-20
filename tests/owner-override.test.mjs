@@ -132,3 +132,32 @@ test("--no-owner-override installs no hook; core block carries the owner overrid
   assert.ok(!fs.existsSync(path.join(home, "hooks.json")));
   for (const f of ["AGENTS.block.md", "CLAUDE.block.md"]) assert.match(fs.readFileSync(path.join(PLUGIN, "policy", f), "utf8"), /Owner Override:/);
 });
+
+test("installer works from a repo path with a space and survives invalid or odd hooks.json", () => {
+  const base = tmp();
+  const copy = path.join(base, "a b");
+  fs.cpSync(ROOT, copy, { recursive: true, filter: (s) => !/node_modules|\.git(\/|$)/.test(s) });
+  const env = (home) => ({ ...process.env, AGENTS_SKILLS_DIR: path.join(home, "skills") });
+  const run = (home, ...a) => spawnSync("bash", [path.join(copy, "scripts/install.sh"), "--codex", "--no-plugin-cmd", "--codex-home", home, ...a], { encoding: "utf8", env: env(home) });
+  // space in path: hooks really get written, and the approval note appears only then
+  const h1 = tmp();
+  const r1 = run(h1);
+  assert.equal(r1.status, 0, r1.stderr);
+  assert.match(fs.readFileSync(path.join(h1, "hooks.json"), "utf8"), /hap-owner-override/);
+  assert.match(r1.stdout, /run \/hooks and approve/);
+  // invalid JSON: installer continues, warns, no approval note, file untouched
+  const h2 = tmp();
+  fs.writeFileSync(path.join(h2, "hooks.json"), "{ not json");
+  const r2 = run(h2);
+  assert.equal(r2.status, 0, r2.stderr + r2.stdout);
+  assert.match(r2.stdout, /WARN owner override hook not merged/);
+  assert.doesNotMatch(r2.stdout, /run \/hooks and approve/);
+  assert.equal(fs.readFileSync(path.join(h2, "hooks.json"), "utf8"), "{ not json");
+  assert.equal(run(h2, "--uninstall").status, 0);
+  // unusual shape: event value is an object
+  const h3 = tmp();
+  fs.writeFileSync(path.join(h3, "hooks.json"), JSON.stringify({ hooks: { SessionStart: { x: 1 } } }));
+  const r3 = run(h3);
+  assert.equal(r3.status, 0, r3.stderr + r3.stdout);
+  assert.match(r3.stdout, /WARN owner override hook not merged/);
+});

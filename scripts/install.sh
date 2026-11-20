@@ -134,14 +134,18 @@ uninstall_skills() {
 # Codex runs a hook only after the user approves it (see the note printed after install).
 OO_SRC="$PLUGIN/hooks/owner_override.py"
 OO_DEST="$CODEX_HOME_DIR/hooks/hap-owner-override.py"
+OO_MERGED=0
 install_override() {
   if ! command -v python3 >/dev/null 2>&1; then echo "SKIP owner override: python3 not found"; return 0; fi
   if [ "$DRY" != 1 ]; then mkdir -p "$CODEX_HOME_DIR/hooks"; cp "$OO_SRC" "$OO_DEST"; fi
   echo "$(verb "copy $OO_DEST")"
-  node "$REPO/scripts/lib/hooks.mjs" upsert "$CODEX_HOME_DIR/hooks.json" "$OO_DEST" $DRYFLAG
+  if node "$REPO/scripts/lib/hooks.mjs" upsert "$CODEX_HOME_DIR/hooks.json" "$OO_DEST" $DRYFLAG \
+     && { [ "$DRY" = 1 ] || grep -q hap-owner-override "$CODEX_HOME_DIR/hooks.json"; }; then OO_MERGED=1
+  else OO_MERGED=0; echo "WARN owner override hook not merged into $CODEX_HOME_DIR/hooks.json; add three entries (SessionStart, UserPromptSubmit, SubagentStart) running: python3 \"$OO_DEST\""; fi
 }
 uninstall_override() {
-  node "$REPO/scripts/lib/hooks.mjs" remove "$CODEX_HOME_DIR/hooks.json" "$OO_DEST" $DRYFLAG
+  node "$REPO/scripts/lib/hooks.mjs" remove "$CODEX_HOME_DIR/hooks.json" "$OO_DEST" $DRYFLAG \
+    || echo "WARN could not edit $CODEX_HOME_DIR/hooks.json; remove the hap-owner-override entries by hand"
   if [ -e "$OO_DEST" ]; then verb "remove $OO_DEST"; if [ "$DRY" != 1 ]; then rm -f "$OO_DEST"; rmdir "$CODEX_HOME_DIR/hooks" 2>/dev/null || true; fi; fi
 }
 
@@ -226,7 +230,7 @@ if [ "$do_codex" = 1 ]; then
   fi
   if [ "$codex_ok" = 0 ]; then copy_skills; fi
 fi
-if [ "$do_codex" = 1 ] && [ "$OVERRIDE" = 1 ] && [ "$DRY" = 0 ]; then
+if [ "$do_codex" = 1 ] && [ "$OVERRIDE" = 1 ] && [ "$DRY" = 0 ] && [ "$OO_MERGED" = 1 ]; then
   echo "ACTION NEEDED for Owner Override in Codex: open Codex, run /hooks and approve the three hap-owner-override hooks."
   echo "Until you approve them Codex runs no hook and Owner Override stays silent (the AGENTS.md rule still applies)."
 fi

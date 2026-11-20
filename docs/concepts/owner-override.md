@@ -28,14 +28,22 @@ security, legal), and a premise replaces no approval from the owner list.
 ## What is deterministic and what is not
 
 - **Deterministic:** recording, lifting, numbering (never reused), the hash
-  chain, delivery of the list at session start, in subagents, after
-  compaction, and with the next prompt of a running session.
+  chain, delivery of the list at session start, in subagents, and with the
+  next prompt of a running session. Re-delivery after context compaction is
+  implemented for Claude Code (session start with source `compact`); for
+  Codex it is not verified.
 - **Not deterministic:** whether an agent keeps to a premise. The text is
   context, not a lock. A hook cannot stop an agent from ignoring it.
-- Only the owner's own message writes. Text that comes from a file, a tool, a
-  subagent, a pasted block, a quotation, or merely mentions the keyword
-  records nothing. Unattended runs (`claude -p`, `codex exec`) record
-  nothing. The command line has no way to set or lift.
+- Only a prompt that *starts* with `Owner Override:` writes. Text from a file,
+  a tool, a subagent, a quotation, or one that merely mentions the keyword
+  records nothing. The command line has no way to set or lift.
+- **Best effort, with known gaps:** (a) Unattended runs (`claude -p`,
+  `codex exec`) are meant to record nothing; the hook finds this out from the
+  process start command, and if it cannot (unusual launcher, wrapper script)
+  the run counts as attended. (b) Pasted text is ignored only when the
+  platform wraps it in a `<pasted_content>` tag, as assumed here; pasted text
+  that arrives as plain prompt text and starts with `Owner Override:` is
+  recorded like typed text. Lift or correct such an entry with a message.
 
 ## Where it lives
 
@@ -60,4 +68,4 @@ rule, so a premise you state is respected even where the hook is not active;
 only the register and the delivery need the hook. Skip the hook with
 `scripts/install.sh --no-owner-override`.
 
-Both platforms deliver the same way: at session start, at subagent start, and with the next prompt of a running session. A change reaches a running session only at its next prompt, not in the middle of a tool call.
+Both platforms deliver at session start, at subagent start (the Codex binary lists a `SubagentStart` event), and with the next prompt of a running session. A change reaches a running session only at its next prompt, not in the middle of a tool call.

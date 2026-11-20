@@ -241,7 +241,7 @@ def launch_args():
     pid = os.getppid()
     for _ in range(6):
         pid, found = process_args(pid)
-        if found and os.path.basename(found.split()[0]) in ("claude", "codex"):
+        if found and (re.search(r"(?:^|/)(?:claude|codex)(?=\s|$)", found) or re.search(r"claude-code/.*cli\.js", found)):
             return found
         if pid <= 1:
             break
@@ -249,18 +249,20 @@ def launch_args():
 
 
 def is_headless(args=None):
-    """True for unattended runs (`claude -p`, `codex exec`): they set nothing. An unknown start command
-    counts as attended, because the hook fires on real prompts and a lost premise is the worse error.
-    Remote or bridge sessions (--sdk-url, stream-json input) are the owner's own and stay attended."""
+    """Best effort: True for unattended runs (`claude -p`, `codex exec`), which set nothing. The start command
+    is read from the process tree; if it cannot be found the run counts as attended, because the hook fires on
+    real prompts and a lost premise is the worse error. Remote or bridge sessions (--sdk-url, stream-json input)
+    are the owner's own and stay attended."""
     if args is None:
         forced = os.environ.get("OWNER_OVERRIDE_TEST_KIND")
-        if forced:
+        if forced and os.environ.get("OWNER_OVERRIDE_DIR"):  # test switch, only inside a sandbox register
             return forced == "headless"
         args = launch_args()
-    tokens = args.split()
-    if re.search(r"(?:^|\s)--sdk-url[=\s]+(?:https?|wss?)://", args) or ("--input-format" in tokens and "stream-json" in tokens):
+    if re.search(r"(?:^|\s)--sdk-url[=\s]+(?:https?|wss?)://", args) or re.search(r"--input-format[=\s]+stream-json", args):
         return False
-    if tokens and re.search(r"(^|/)codex$", tokens[0]):
+    m = re.search(r"(?:^|/)(claude|codex)(?=\s|$)", args)  # the executable may sit in a path with spaces
+    tokens = args[m.end():].split() if m else args.split()
+    if m and m.group(1) == "codex":
         return "exec" in tokens
     return "-p" in tokens or "--print" in tokens
 
