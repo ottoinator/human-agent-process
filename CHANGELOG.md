@@ -1,6 +1,16 @@
 # Changelog
 
-## Unreleased
+## 2.1.0 - 2026-11-20
+
+- **Owner Override.** A premise the owner sets with `Owner Override: <premise>`
+  is recorded by a hook (one script for Claude Code and Codex), delivered at
+  session start, to subagents and with the next prompt, and agents build on it
+  instead of reopening it. Claude Code gets the hooks with the plugin; the
+  Codex installer merges them into `hooks.json` and tells you to approve them
+  under `/hooks` (Codex runs no hook before that). `--no-owner-override` skips
+  it. Docs: `docs/concepts/owner-override.md`. Needs `python3`.
+- The owner-boundary core block carries a short Owner Override rule.
+
 
 - **All modules are on by default.** impact-map, second-opinion,
   design-reference, and remote-review were off in 2.0.0. Their rules now gate

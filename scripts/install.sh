@@ -12,13 +12,13 @@ CODEX_HOME_DIR="${CODEX_HOME:-$HOME/.codex}"
 AGENTS_SKILLS="${AGENTS_SKILLS_DIR:-}"
 CODEX_HOME_FLAG=0
 CLAUDE_HOME_FLAG=0
-DRY=0; UNINSTALL=0; MIGRATE=0; FORCE=0; PLUGIN_CMD=1
+DRY=0; UNINSTALL=0; MIGRATE=0; FORCE=0; PLUGIN_CMD=1; OVERRIDE=1
 
 usage() {
   cat <<USAGE
 Usage: scripts/install.sh [--claude|--codex|--both] [--modules default|all|none|a,b|-a,-b]
   [--claude-home DIR] [--codex-home DIR] [--dry-run] [--uninstall]
-  [--migrate-from-1x] [--force] [--no-plugin-cmd]
+  [--migrate-from-1x] [--force] [--no-plugin-cmd] [--no-owner-override]
 USAGE
 }
 
@@ -35,6 +35,7 @@ while [ $# -gt 0 ]; do
     --migrate-from-1x) MIGRATE=1 ;;
     --force) FORCE=1 ;;
     --no-plugin-cmd) PLUGIN_CMD=0 ;;
+    --no-owner-override) OVERRIDE=0 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
@@ -129,6 +130,21 @@ uninstall_skills() {
   done
 }
 
+# Owner Override on Codex: copy the hook script and merge three entries into hooks.json.
+# Codex runs a hook only after the user approves it (see the note printed after install).
+OO_SRC="$PLUGIN/hooks/owner_override.py"
+OO_DEST="$CODEX_HOME_DIR/hooks/hap-owner-override.py"
+install_override() {
+  if ! command -v python3 >/dev/null 2>&1; then echo "SKIP owner override: python3 not found"; return 0; fi
+  if [ "$DRY" != 1 ]; then mkdir -p "$CODEX_HOME_DIR/hooks"; cp "$OO_SRC" "$OO_DEST"; fi
+  echo "$(verb "copy $OO_DEST")"
+  node "$REPO/scripts/lib/hooks.mjs" upsert "$CODEX_HOME_DIR/hooks.json" "$OO_DEST" $DRYFLAG
+}
+uninstall_override() {
+  node "$REPO/scripts/lib/hooks.mjs" remove "$CODEX_HOME_DIR/hooks.json" "$OO_DEST" $DRYFLAG
+  if [ -e "$OO_DEST" ]; then verb "remove $OO_DEST"; if [ "$DRY" != 1 ]; then rm -f "$OO_DEST"; rmdir "$CODEX_HOME_DIR/hooks" 2>/dev/null || true; fi; fi
+}
+
 migrate() {
   local l t
   if [ -d "$CLAUDE_HOME/skills" ]; then
@@ -165,6 +181,7 @@ if [ "$UNINSTALL" = 1 ]; then
     blockfile remove "$CODEX_HOME_DIR/AGENTS.md" $DRYFLAG
     uninstall_agents
     uninstall_skills
+    uninstall_override
   fi
   if [ "$PLUGIN_CMD" = 1 ] && [ "$DRY" = 0 ]; then
     if [ "$do_claude" = 1 ] && command -v claude >/dev/null 2>&1; then
@@ -189,6 +206,7 @@ if [ "$do_codex" = 1 ]; then
   [ -s "$TMP/codex.block" ] || { echo "block generation produced no output; nothing written" >&2; exit 1; }
   blockfile upsert "$CODEX_HOME_DIR/AGENTS.md" "$TMP/codex.block" $DRYFLAG
   install_agents
+  if [ "$OVERRIDE" = 1 ]; then install_override; fi
 fi
 
 if [ "$do_claude" = 1 ]; then
@@ -207,6 +225,13 @@ if [ "$do_codex" = 1 ]; then
     else echo "codex plugin commands failed; copying skills instead"; fi
   fi
   if [ "$codex_ok" = 0 ]; then copy_skills; fi
+fi
+if [ "$do_codex" = 1 ] && [ "$OVERRIDE" = 1 ] && [ "$DRY" = 0 ]; then
+  echo "ACTION NEEDED for Owner Override in Codex: open Codex, run /hooks and approve the three hap-owner-override hooks."
+  echo "Until you approve them Codex runs no hook and Owner Override stays silent (the AGENTS.md rule still applies)."
+fi
+if [ "$do_claude" = 1 ] && [ "$OVERRIDE" = 1 ]; then
+  echo "Owner Override in Claude Code: its hooks come with the plugin and run after the plugin is installed and enabled."
 fi
 if [ "$DRY" = 1 ]; then echo "dry run: nothing written"; fi
 exit 0

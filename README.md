@@ -106,6 +106,9 @@ new products, and anything where a wrong "done" is expensive.
   [LightRAG adapter](examples/memory-adapter-lightrag/README.md) ships as an
   example; other stores plug in through the same
   [contract](docs/reference/memory-layer.md). No store at all also works.
+- **Premises that stick.** `Owner Override: <premise>` records a decision once;
+  hooks on both platforms hand it to every session and subagent, and agents
+  build on it instead of reopening it ([how it works](docs/concepts/owner-override.md)).
 - **Guardrails from real failures.** Modules for growing files,
   automation writing into shared repos, promised recurring jobs, and
   forgotten consumers. Each one exists because something broke
@@ -207,7 +210,7 @@ set with `--modules a,b`.
 ## Documentation
 
 - Start: [see it work](docs/start/see-it-work.md), [quickstart](docs/start/quickstart.md), [install for agents](docs/start/install-for-agents.md)
-- Concepts: [owner boundary](docs/concepts/owner-boundary.md), [tiers and start gate](docs/concepts/tiers-and-start-gate.md), [roles and cost](docs/concepts/roles-and-cost.md), [critic and evidence](docs/concepts/critic-and-evidence.md), [memory adapter](docs/concepts/memory-adapter.md)
+- Concepts: [owner boundary](docs/concepts/owner-boundary.md), [owner override](docs/concepts/owner-override.md), [tiers and start gate](docs/concepts/tiers-and-start-gate.md), [roles and cost](docs/concepts/roles-and-cost.md), [critic and evidence](docs/concepts/critic-and-evidence.md), [memory adapter](docs/concepts/memory-adapter.md)
 - [Why the rules exist](docs/why/README.md), [decisions](docs/decisions/2026-11-04-two-platforms-one-core.md), [reference](docs/reference/terminology.md)
 - [Templates](templates/README.md), [examples](examples/minimal-adoption/README.md)
 

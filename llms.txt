@@ -12,6 +12,7 @@
 ## Concepts
 
 - [Owner boundary](docs/concepts/owner-boundary.md)
+- [Owner override](docs/concepts/owner-override.md)
 - [Tiers and the start gate](docs/concepts/tiers-and-start-gate.md)
 - [Roles and cost](docs/concepts/roles-and-cost.md)
 - [Critic and evidence](docs/concepts/critic-and-evidence.md)
